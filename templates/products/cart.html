@@ -1,0 +1,88 @@
+{% extends "users/home.html" %}
+{% load custom_filters %}
+
+{% block header %}
+Kitenga chako
+{% endblock %}
+
+{% block main_block %}
+
+<div class="text-center bg-blue-100 mt-2 py-3 border-b-2 border-blue-700">
+    <h1 class="text-xl md:text-2xl font-bold text-blue-800">
+        Kitenga chako
+    </h1>
+</div>
+
+<!-- Jedwali la Vitu vya Gurudumu -->
+<div class="m-3 overflow-x-auto">
+    <table class="min-w-full border table-auto bg-white shadow-md rounded-lg">
+        <thead class="bg-blue-50 text-blue-900">
+            <tr class="border-b">
+                <th class="px-4 py-3 text-left">Bidhaa</th>
+                <th class="px-4 py-3 text-left">Jina</th>
+                <th class="px-4 py-3 text-center">Kiasi</th>
+                <th class="px-4 py-3 text-right">Bei</th>
+                <th class="px-4 py-3 text-right">Jumla</th>
+                <th class="px-4 py-3 text-right">Hatua</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr class="border-b hover:bg-blue-50 transition">
+                <!-- Picha ya Bidhaa -->
+                <td class="px-4 py-3 text-center">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="object-cover w-16 h-full mx-auto rounded">
+                </td>
+                <!-- Jina la Bidhaa -->
+                <td class="px-4 py-3">
+                    <h2 class="font-semibold">{{ item.product.name }}</h2>
+                </td>
+                <!-- Kiasi -->
+                <td class="px-4 py-3 text-center">
+                    <form method="post" action="{% url 'update_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-16 focus:outline-none focus:ring-2 focus:ring-blue-500 border rounded text-center">
+                        <button type="submit" class="ml-2 text-blue-500 hover:text-blue-700">
+                            Sasisha
+                        </button>
+                    </form>
+                </td>
+                <!-- Bei ya Kila Moja -->
+                <td class="px-4 py-3 text-right">
+                    {{ item.product.price|format_currency }}
+                </td>
+                <!-- Jumla ya Bei ya Bidhaa -->
+                <td class="px-4 py-3 text-right">
+                    {{ item.total_price|format_currency }}
+                </td>
+                <!-- Ondoa Bidhaa -->
+                <td class="px-4 py-3 text-right">
+                    <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-500 hover:text-red-700">
+                            Ondoa
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="px-4 py-4 text-center text-gray-500">Kitenga chako ni kitupu.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Jumla ya Gharama -->
+<div class="mt-6 text-right bg-white p-4 shadow rounded-lg">
+    <h3 class="font-semibold text-xl">Jumla: {{ total_sum|format_currency }}</h3>
+</div>
+
+<!-- Vitufe vya Malipo na Kuendelea na Ununuzi -->
+<div class="m-6 flex justify-between space-x-4">
+    <a href="{% url 'shop' %}" class="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-500">Endelea na Ununuzi</a>
+    <a href="{% url 'checkout' %}" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500">Endelea mbele</a>
+</div>
+
+{% endblock %}

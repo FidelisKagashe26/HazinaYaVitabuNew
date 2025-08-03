@@ -1,0 +1,171 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load i18n %}
+
+{% block header %}
+{% trans "Superuser Dashboard" %} - {% trans "Hazina ya Vitabu" %}
+{% endblock %}
+
+{% block main_block %}
+<div class="py-8 px-6 md:px-16 {% if theme == 'dark' %}bg-gray-900{% else %}bg-gray-50{% endif %}">
+    <!-- Header Section -->
+    <header class="mb-8 mt-4 pb-6 border-b-2 {% if theme == 'dark' %}border-blue-400{% else %}border-blue-400{% endif %}">
+        <h1 class="text-4xl font-extrabold text-center {% if theme == 'dark' %}text-blue-400{% else %}text-blue-800{% endif %}">{% trans "Superuser Dashboard" %}</h1>
+        <p class="text-center text-lg mt-3 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">
+            {% trans "System Overview and Management" %}
+        </p>
+    </header>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border text-center">
+            <div class="text-3xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %}">{{ total_users }}</div>
+            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Total Users" %}</div>
+        </div>
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border text-center">
+            <div class="text-3xl font-bold {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %}">{{ total_sellers }}</div>
+            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Sellers" %}</div>
+        </div>
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border text-center">
+            <div class="text-3xl font-bold {% if theme == 'dark' %}text-purple-400{% else %}text-purple-600{% endif %}">{{ total_buyers }}</div>
+            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Buyers" %}</div>
+        </div>
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border text-center">
+            <div class="text-3xl font-bold {% if theme == 'dark' %}text-orange-400{% else %}text-orange-600{% endif %}">{{ total_orders }}</div>
+            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Total Orders" %}</div>
+        </div>
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border text-center">
+            <div class="text-3xl font-bold {% if theme == 'dark' %}text-red-400{% else %}text-red-600{% endif %}">{{ pending_orders }}</div>
+            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Pending Orders" %}</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <a href="{% url 'manage_users' %}" class="{% if theme == 'dark' %}bg-blue-600 hover:bg-blue-700{% else %}bg-blue-600 hover:bg-blue-700{% endif %} text-white p-6 rounded-lg shadow-lg text-center transition duration-200">
+            <i class="bi bi-people text-3xl mb-2"></i>
+            <h3 class="text-xl font-semibold">{% trans "Manage Users" %}</h3>
+            <p class="text-sm opacity-90">{% trans "Add/Edit Users" %}</p>
+        </a>
+        
+        <a href="{% url 'view_reports' %}" class="{% if theme == 'dark' %}bg-green-600 hover:bg-green-700{% else %}bg-green-600 hover:bg-green-700{% endif %} text-white p-6 rounded-lg shadow-lg text-center transition duration-200">
+            <i class="bi bi-graph-up text-3xl mb-2"></i>
+            <h3 class="text-xl font-semibold">{% trans "View Reports" %}</h3>
+            <p class="text-sm opacity-90">{% trans "Daily/Monthly Reports" %}</p>
+        </a>
+        
+        <a href="{% url 'fmkmyadmin:index' %}" class="{% if theme == 'dark' %}bg-purple-600 hover:bg-purple-700{% else %}bg-purple-600 hover:bg-purple-700{% endif %} text-white p-6 rounded-lg shadow-lg text-center transition duration-200">
+            <i class="bi bi-gear text-3xl mb-2"></i>
+            <h3 class="text-xl font-semibold">{% trans "Admin Panel" %}</h3>
+            <p class="text-sm opacity-90">{% trans "System Settings" %}</p>
+        </a>
+        
+        <a href="{% url 'shop' %}" class="{% if theme == 'dark' %}bg-orange-600 hover:bg-orange-700{% else %}bg-orange-600 hover:bg-orange-700{% endif %} text-white p-6 rounded-lg shadow-lg text-center transition duration-200">
+            <i class="bi bi-bag text-3xl mb-2"></i>
+            <h3 class="text-xl font-semibold">{% trans "Manage Products" %}</h3>
+            <p class="text-sm opacity-90">{% trans "View Products" %}</p>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Orders -->
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+            <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Recent Orders" %}</h2>
+            
+            {% if recent_orders %}
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for order in recent_orders %}
+                    <div class="{% if theme == 'dark' %}bg-gray-700 border-gray-600{% else %}bg-gray-50 border-gray-200{% endif %} p-4 rounded-lg border">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{% trans "Order" %} #{{ order.id }}</h3>
+                                <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.customer_name }} - {{ order.customer_email }}</p>
+                                <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.created_at|date:"M d, Y H:i" }}</p>
+                                <p class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ order.total_amount|format_currency }}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium
+                                {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                {% elif order.status == 'accepted' %}bg-blue-100 text-blue-800
+                                {% elif order.status == 'completed' %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+                        {% if order.seller %}
+                            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %} text-sm mt-2">
+                                {% trans "Seller" %}: {{ order.seller.username }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %}">{% trans "No orders yet." %}</p>
+            {% endif %}
+        </div>
+
+        <!-- Today's Reports -->
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+            <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Today's Reports" %}</h2>
+            
+            {% if today_reports %}
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for report in today_reports %}
+                    <div class="{% if theme == 'dark' %}bg-gray-700 border-gray-600{% else %}bg-gray-50 border-gray-200{% endif %} p-4 rounded-lg border">
+                        <h3 class="font-semibold {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{{ report.seller.username }}</h3>
+                        <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                            <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Books Sold" %}: <span class="font-semibold">{{ report.books_sold_money }}</span></div>
+                            <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Books Free" %}: <span class="font-semibold">{{ report.books_given_free }}</span></div>
+                            <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Houses" %}: <span class="font-semibold">{{ report.houses_visited }}</span></div>
+                            <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Hours" %}: <span class="font-semibold">{{ report.working_hours }}</span></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %}">{% trans "No reports submitted today." %}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="mt-8 {% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+        <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Recent Users" %}</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="{% if theme == 'dark' %}bg-gray-700{% else %}bg-gray-50{% endif %}">
+                    <tr>
+                        <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Username" %}</th>
+                        <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Email" %}</th>
+                        <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Role" %}</th>
+                        <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Joined" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in recent_users %}
+                    <tr class="{% if theme == 'dark' %}border-gray-700{% else %}border-gray-200{% endif %} border-b">
+                        <td class="px-4 py-2 {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{{ user.username }}</td>
+                        <td class="px-4 py-2 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{{ user.email }}</td>
+                        <td class="px-4 py-2">
+                            {% if user.userprofile %}
+                                <span class="px-2 py-1 rounded text-xs font-medium
+                                    {% if user.userprofile.role == 'seller' %}bg-green-100 text-green-800
+                                    {% elif user.userprofile.role == 'buyer' %}bg-blue-100 text-blue-800
+                                    {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                    {{ user.userprofile.get_role_display }}
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">{% trans "No Role" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-2 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{{ user.date_joined|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

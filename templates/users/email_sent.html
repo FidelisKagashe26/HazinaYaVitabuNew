@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sent</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+</head>
+
+<body class="bg-gradient-to-l from-yellow-50 to-yellow-200 flex items-center justify-center min-h-screen">
+    <div class="bg-white m-3 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-extrabold text-yellow-600 mb-6 text-center">Check Your Email</h1>
+
+        <p class="text-lg text-gray-700 mb-4 text-center">
+            A special email verification link has been sent to your email address. Please check your inbox and click the link to verify your email and complete your registration.
+        </p>
+
+        <p class="text-sm text-gray-600 text-center">
+            The verification link will expire in 1 hour, so make sure to complete the process soon.
+        </p>
+
+        <div class="mt-6 text-center">
+            <a href="{% url 'login' %}" class="text-yellow-700 hover:underline">Back to Login</a>
+        </div>
+    </div>
+</body>
+
+</html>

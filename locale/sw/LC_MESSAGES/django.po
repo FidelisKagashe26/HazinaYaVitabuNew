@@ -1,0 +1,244 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-13 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Hazina ya Vitabu"
+msgstr "Hazina ya Vitabu"
+
+msgid "Home"
+msgstr "Nyumbani"
+
+msgid "Shop"
+msgstr "Dukani"
+
+msgid "Cart"
+msgstr "Kitenga"
+
+msgid "View cart"
+msgstr "Angalia kitenga"
+
+msgid "Toggle Theme"
+msgstr "Badilisha Mandhari"
+
+msgid "Hello"
+msgstr "Hujambo"
+
+msgid "Profile"
+msgstr "Wasifu"
+
+msgid "Logout"
+msgstr "Toka"
+
+msgid "Login"
+msgstr "Ingia"
+
+msgid "Register"
+msgstr "Jisajili"
+
+msgid "Language changed successfully!"
+msgstr "Lugha imebadilishwa kwa ufanisi!"
+
+msgid "Account created successfully! You can now log in."
+msgstr "Akaunti imeundwa kwa ufanisi! Sasa unaweza kuingia."
+
+msgid "Welcome back, %(username)s!"
+msgstr "Karibu tena, %(username)s!"
+
+msgid "Profile updated successfully!"
+msgstr "Wasifu umesasishwa kwa ufanisi!"
+
+msgid "Create Account"
+msgstr "Unda Akaunti"
+
+msgid "Join Hazina ya Vitabu today"
+msgstr "Jiunge na Hazina ya Vitabu leo"
+
+msgid "First Name"
+msgstr "Jina la Kwanza"
+
+msgid "Last Name"
+msgstr "Jina la Mwisho"
+
+msgid "Username"
+msgstr "Jina la Mtumiaji"
+
+msgid "Email"
+msgstr "Barua Pepe"
+
+msgid "Phone Number"
+msgstr "Namba ya Simu"
+
+msgid "Password"
+msgstr "Nenosiri"
+
+msgid "Confirm Password"
+msgstr "Thibitisha Nenosiri"
+
+msgid "Already have an account?"
+msgstr "Tayari una akaunti?"
+
+msgid "Sign in"
+msgstr "Ingia"
+
+msgid "Back to Home"
+msgstr "Rudi Nyumbani"
+
+msgid "Welcome Back"
+msgstr "Karibu Tena"
+
+msgid "Sign in to your account"
+msgstr "Ingia kwenye akaunti yako"
+
+msgid "Enter your username"
+msgstr "Ingiza jina lako la mtumiaji"
+
+msgid "Enter your password"
+msgstr "Ingiza nenosiri lako"
+
+msgid "Sign In"
+msgstr "Ingia"
+
+msgid "Don't have an account?"
+msgstr "Huna akaunti?"
+
+msgid "Sign up"
+msgstr "Jisajili"
+
+msgid "My Profile"
+msgstr "Wasifu Wangu"
+
+msgid "Manage your account information"
+msgstr "Dhibiti taarifa za akaunti yako"
+
+msgid "Update Your Information"
+msgstr "Sasisha Taarifa Zako"
+
+msgid "Email Address"
+msgstr "Anuani ya Barua Pepe"
+
+msgid "Save Changes"
+msgstr "Hifadhi Mabadiliko"
+
+msgid "Phone number must start with +255."
+msgstr "Namba ya simu lazima ianze na +255."
+
+msgid "Phone number must be exactly 13 digits long."
+msgstr "Namba ya simu lazima iwe na tarakimu 13 haswa."
+
+msgid "Phone number must only contain digits and the '+' sign."
+msgstr "Namba ya simu lazima iwe na tarakimu na alama ya '+' tu."
+
+msgid "A user with this email already exists."
+msgstr "Mtumiaji mwenye barua pepe hii tayari yupo."
+
+msgid "Quantity must be at least 1."
+msgstr "Kiasi lazima kiwe angalau 1."
+
+msgid "Invalid quantity specified."
+msgstr "Kiasi kisichosahihi kimetajwa."
+
+msgid "%(product)s has been added to your cart! (Quantity: %(quantity)d)"
+msgstr "%(product)s imeongezwa kwenye kitenga chako! (Kiasi: %(quantity)d)"
+
+msgid "Only %(stock)d units of %(product)s are available."
+msgstr "Vipimo %(stock)d tu vya %(product)s vinapatikana."
+
+msgid "Haki zote zimehifadhiwa"
+msgstr "Haki zote zimehifadhiwa"
+
+msgid "Enter your email"
+msgstr "Ingiza barua pepe yako"
+
+msgid "Forgot Password?"
+msgstr "Umesahau nenosiri?"
+
+msgid "Set New Password"
+msgstr "Weka Nenosiri Jipya"
+
+msgid "Enter your new password"
+msgstr "Ingiza nenosiri lako jipya"
+
+msgid "New Password"
+msgstr "Nenosiri Jipya"
+
+msgid "Enter new password"
+msgstr "Ingiza nenosiri jipya"
+
+msgid "Confirm New Password"
+msgstr "Thibitisha Nenosiri Jipya"
+
+msgid "Confirm new password"
+msgstr "Thibitisha nenosiri jipya"
+
+msgid "Reset Password"
+msgstr "Rudisha Nenosiri"
+
+msgid "Back to Login"
+msgstr "Rudi kwenye Kuingia"
+
+msgid "Password Reset"
+msgstr "Kurudisha Nenosiri"
+
+msgid "Enter your email to receive a reset code"
+msgstr "Ingiza barua pepe yako kupokea msimbo wa kurudisha"
+
+msgid "Email Address"
+msgstr "Anuani ya Barua Pepe"
+
+msgid "Send Reset Code"
+msgstr "Tuma Msimbo wa Kurudisha"
+
+msgid "Password reset code has been sent to your email."
+msgstr "Msimbo wa kurudisha nenosiri umetumwa kwenye barua pepe yako."
+
+msgid "No user found with this email address."
+msgstr "Hakuna mtumiaji aliyepatikana na anuani hii ya barua pepe."
+
+msgid "Invalid or expired reset code."
+msgstr "Msimbo wa kurudisha si sahihi au umeisha muda."
+
+msgid "Invalid password reset session."
+msgstr "Kipindi cha kurudisha nenosiri si sahihi."
+
+msgid "Passwords do not match."
+msgstr "Nenosiri hazifanani."
+
+msgid "Password must be at least 8 characters long."
+msgstr "Nenosiri lazima liwe na angalau herufi 8."
+
+msgid "Password has been reset successfully. You can now log in."
+msgstr "Nenosiri limerudishwa kwa ufanisi. Sasa unaweza kuingia."
+
+msgid "Invalid user."
+msgstr "Mtumiaji si sahihi."
+
+msgid "You have been logged out successfully."
+msgstr "Umetoka kwa ufanisi."
+
+msgid "Your message has been sent successfully!"
+msgstr "Ujumbe wako umetumwa kwa ufanisi!"
+
+msgid "There was an issue sending your message. Please try again later."
+msgstr "Kulikuwa na tatizo la kutuma ujumbe wako. Tafadhali jaribu tena baadaye."
+
+msgid "Password Reset Code - Hazina ya Vitabu"
+msgstr "Msimbo wa Kurudisha Nenosiri - Hazina ya Vitabu"
+
+msgid "Your password reset code is: %(code)s\n\nThis code will expire in 1 hour."
+msgstr "Msimbo wako wa kurudisha nenosiri ni: %(code)s\n\nMsimbo huu utaisha baada ya saa 1."

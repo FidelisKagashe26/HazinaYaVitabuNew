@@ -1,0 +1,60 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block header %}
+Hazina ya Vitabu - Vitabu vya Kiinjilisti
+{% endblock %}
+
+{% block main_block %}
+<div class="bg-blue-100 py-16">
+    <div class="container mx-auto px-4 text-center">
+        <!-- Sehemu ya Karibu -->
+        <h1 class="text-4xl font-bold text-blue-900 mb-4">
+            Karibu <span class="text-blue-700">Hazina ya Vitabu</span>
+        </h1>
+        <p class="text-lg text-blue-900 mb-8">
+            Karibu uweze kuagiza vitabu mbalimbali vitakavyo kukuza kiroho,
+            kiuchumi, kifamilia, kijamii na kiafya.
+        </p>
+        <a href="{% url 'shop' %}" class="bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-500 transition duration-300">
+            Karibu dukani
+        </a>
+    </div>
+
+    <!-- Mambo Muhimu kuhusu Vitabu vya Kiinjilisti -->
+    <div class="mt-12 bg-white py-8 shadow-lg rounded-lg mx-4 md:mx-auto max-w-4xl">
+        <h2 class="text-3xl font-semibold px-3 text-blue-700 mb-6 text-center">Kwanini tusome vitabu?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
+            <div class="text-center">
+                <i class="bi text-blue-300 text-5xl bi-journal-text"></i>
+                <h3 class="text-xl font-bold text-blue-600">Miongozo ya Maisha ya Kiroho</h3>
+                <p class="text-gray-600">Pata maarifa ya kuishi maisha yenye kusudi bora la MUNGU kupitia mafundisho ya Biblia.</p>
+            </div>
+            <div class="text-center">
+                <i class="bi text-blue-300 text-5xl bi-heart-pulse-fill"></i>
+                <h3 class="text-xl font-bold text-blue-600">Ujengaji wa Afya</h3>
+                <p class="text-gray-600">Soma vitabu utengeneze afya yako kwa ulaji sahihi vya vyakula na kutengeneza mtindo bora wa maisha.</p>
+            </div>
+            <div class="text-center">
+                <i class="bi text-blue-300 text-5xl bi-unity"></i>
+                <h3 class="text-xl font-bold text-blue-600">Kuimarisha Mahusiano ya Familia</h3>
+                <p class="text-gray-600">Vitabu vinavyokuza maadili na mshikamano wa kifamilia kulingana na imani ya Kikristo.</p>
+            </div>
+            <div class="text-center">
+                <i class="bi text-blue-300 text-5xl bi-people-fill"></i>
+                <h3 class="text-xl font-bold text-blue-600">Kuimarisha Mahusiano ya Kijamii</h3>
+                <p class="text-gray-600">Jifunze jinsi ya kuishi kwa amani na jamii na kuwa mfano bora wa YESU KRISTO kwa lengo la kufanya Uinjiristi.</p>
+            </div>
+            
+            <div class="text-center">
+                <i class="bi text-blue-300 text-5xl bi-bar-chart-line-fill"></i>
+                <h3 class="text-xl font-bold text-blue-600">Kujengeka Kiuchumi</h3>
+                <p class="text-gray-600">
+                    Jifunze kanuni za kifedha zinazotokana na maandiko ya Biblia, mbinu bora za kuanzisha biashara ndogo ndogo, na jinsi ya kuweka akiba kwa ajili ya siku zijazo.
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

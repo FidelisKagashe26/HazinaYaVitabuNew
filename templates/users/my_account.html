@@ -1,0 +1,170 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% block header %}
+Edit Profile - Fmk Link
+{% endblock %}
+
+{% block main_block %}
+<div class="py-4 px-8 md:px-12 bg-yellow-100">
+    <header class="mb-6 pb-2 border-b-2 border-yellow-300">
+        <h1 class="text-xl md:text-3xl font-bold text-center"><span class="text-yellow-700">Edit Profile</span></h1>
+    </header>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg mx-auto max-w-lg">
+        <h2 class="text-xl text-center border-b-2 pb-2 border-yellow-100 font-bold text-yellow-700 mb-4">Update Your Details</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="bg-green-100 border text-center border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="post" id="editProfileForm" class="space-y-4">
+            {% csrf_token %}
+        
+            <!-- First Name -->
+            <p>
+                <label for="id_first_name">First name:</label>
+                <input type="text" name="first_name" id="id_first_name" 
+                       class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-yellow-500" 
+                       maxlength="150" value="{{ user_form.first_name.value|default_if_none:'' }}" required>
+                {% if user_form.first_name.errors %}
+                    <div class="text-sm text-red-500 mt-1">
+                        {% for error in user_form.first_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </p>
+        
+            <!-- Last Name -->
+            <p>
+                <label for="id_last_name">Last name:</label>
+                <input type="text" name="last_name" id="id_last_name" 
+                       class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-yellow-500" 
+                       maxlength="150" value="{{ user_form.last_name.value|default_if_none:'' }}" required>
+                {% if user_form.last_name.errors %}
+                    <div class="text-sm text-red-500 mt-1">
+                        {% for error in user_form.last_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </p>
+        
+            <!-- Username -->
+            <p>
+                <label for="id_username">Username:</label>
+                <input type="text" name="username" id="id_username" 
+                       value="{{ user_form.username.value|default_if_none:'' }}" 
+                       class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-yellow-500" 
+                       maxlength="150" required>
+                {% if user_form.username.errors %}
+                    <div class="text-sm text-red-500 mt-1">
+                        {% for error in user_form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </p>
+        
+            <!-- Email -->
+            <p>
+                <label for="id_email">Email address:</label>
+                <input type="email" name="email" id="id_email" 
+                       value="{{ user_form.email.value|default_if_none:'' }}" 
+                       readonly="readonly" 
+                       class="mt-1 p-2 border border-gray-300 rounded w-full bg-gray-100 text-gray-500 focus:outline-none focus:border-yellow-500" 
+                       maxlength="254" required>
+            </p>
+            
+            <!-- Phone Number -->
+            <p>
+                <label for="id_phone_number">Phone Number:</label>
+                <input type="text" name="phone_number" id="id_phone_number" 
+                    class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-yellow-500" 
+                    maxlength="13" value="{{ user_profile_form.phone_number.value|default_if_none:'' }}" 
+                    placeholder="+2557XXXXXXXXX" required 
+                    oninput="validatePhoneNumber(event)">
+                {% if user_profile_form.phone_number.errors %}
+                    <div class="text-sm text-red-500 mt-1">
+                        {% for error in user_profile_form.phone_number.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </p>
+        
+            <button type="submit" class="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-500 transition duration-200">
+                Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+        // Get all input elements
+        const inputs = document.querySelectorAll('#editProfileForm input[required]');
+        let isValid = true;
+
+        // Validate each required input
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.classList.add('border-red-500'); // Highlight the field with a red border
+                input.focus();
+            } else {
+                input.classList.remove('border-red-500'); // Remove red border if corrected
+            }
+        });
+
+        // Get phone number field
+        const phoneNumberField = document.getElementById('id_phone_number');
+        let phoneNumber = phoneNumberField.value.trim();
+        
+        // Automatically format phone numbers starting with '07', '06', '00', or '+2550'
+        if (phoneNumber) {
+            if (phoneNumber.startsWith('07') || phoneNumber.startsWith('06')) {
+                phoneNumber = '+255' + phoneNumber.slice(1); // Replace leading '0' with '+255'
+            } else if (phoneNumber.startsWith('00')) {
+                phoneNumber = '+255' + phoneNumber.slice(2); // Replace leading '00' with '+255'
+            } else if (phoneNumber.startsWith('+2550')) {
+                phoneNumber = '+255' + phoneNumber.slice(5); // Correct formatting for numbers starting with '+2550'
+            }
+
+            // Allow only digits and plus sign (+)
+            phoneNumber = phoneNumber.replace(/[^0-9+]/g, ''); // Remove any characters that are not digits or plus sign
+
+            // Set the cleaned phone number back to the input field
+            phoneNumberField.value = phoneNumber;
+        }
+
+        // Validate phone number format
+        if (phoneNumber && !phoneNumber.startsWith('+255')) {
+            isValid = false;
+            phoneNumberField.classList.add('border-red-500'); // Highlight phone number field with a red border
+            alert('Phone number must start with +255.');
+            phoneNumberField.focus();
+        } else if (phoneNumber.length !== 13) {  // Ensure phone number is exactly 13 digits
+            isValid = false;
+            phoneNumberField.classList.add('border-red-500'); // Highlight phone number field with a red border
+            alert('Phone number must be exactly 13 digits long.');
+            phoneNumberField.focus();
+        } else {
+            phoneNumberField.classList.remove('border-red-500'); // Remove red border if valid
+        }
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            event.preventDefault();
+            alert('Please fill in all required fields and ensure the phone number is correctly formatted with digits only.');
+        }
+    });
+</script>
+
+
+{% endblock %}

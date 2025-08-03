@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Code</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+    <style>
+        .digit-input {
+            width: 3rem;
+            height: 3rem;
+            text-align: center;
+            font-size: 1.25rem;
+            border: 2px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.375rem; /* Tailwind rounded */
+            outline: none;
+        }
+
+        .digit-input:focus {
+            border-color: #f59e0b; /* Tailwind yellow-500 */
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); /* Tailwind yellow-500 opacity */
+        }
+
+        .digit-input-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-l from-yellow-50 to-yellow-200 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg m-3 shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-extrabold mb-6 text-center text-yellow-500">Verify Code</h2>
+
+        {% if error %}
+            <div class="mb-4 p-4 rounded bg-red-100 text-red-800 text-center" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="reset_code" class="block text-sm font-medium text-gray-700 mb-2">Enter the 6-digit code:</label>
+                <div class="digit-input-group">
+                    <input 
+                        type="text" 
+                        name="digit1" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d" 
+                        autofocus
+                    >
+                    <input 
+                        type="text" 
+                        name="digit2" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d"
+                    >
+                    <input 
+                        type="text" 
+                        name="digit3" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d"
+                    >
+                    <input 
+                        type="text" 
+                        name="digit4" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d"
+                    >
+                    <input 
+                        type="text" 
+                        name="digit5" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d"
+                    >
+                    <input 
+                        type="text" 
+                        name="digit6" 
+                        maxlength="1" 
+                        required 
+                        class="digit-input" 
+                        pattern="\d"
+                    >
+                </div>
+            </div>
+            <button 
+                type="submit" 
+                class="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-500 transition duration-200 mt-4"
+            >
+                Verify Code
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <a href="{% url 'resend_reset_code' %}" class="text-yellow-700 hover:underline">Resend Code</a>
+        </div>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('.digit-input');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

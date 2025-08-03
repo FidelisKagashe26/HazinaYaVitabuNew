@@ -1,0 +1,169 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maelezo ya Agizo</title>
+    <style>
+        /* Mitindo ya Ulimwengu */
+        body {
+            background-color: #FFFFFF; /* Nyeupe kama msingi */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #3B3A36; /* Kijivu nyepesi kwa maandishi */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #F8FAFC; /* Kijivu nyepesi kwa maudhui */
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 35px;
+            border: 2px solid #3B82F6; /* Bluu kama mpaka */
+            text-align: center;
+        }
+
+        /* Kichwa */
+        .header {
+            text-align: center;
+            background-color: #3B82F6; /* Bluu kama rangi kuu */
+            color: #FFFFFF; /* Nyeupe kwa maandishi */
+            padding: 20px 0;
+            font-size: 30px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 26px;
+            margin-top: 20px;
+            color: #3B82F6; /* Bluu kwa vichwa vya sehemu */
+        }
+
+        p {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 10px;
+            color: #3B3A36; /* Kijivu nyepesi */
+        }
+
+        /* Orodha ya Maelezo ya Agizo */
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .order-list li {
+            background-color: #FFFFFF; /* Nyeupe kwa vitu vya orodha */
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #3B82F6; /* Bluu kama mpaka */
+        }
+
+        .order-list img {
+            width: 80px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .order-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #3B3A36; /* Kijivu nyepesi */
+        }
+
+        .order-item span {
+            color: #3B82F6; /* Bluu kwa maandishi muhimu */
+            font-weight: bold;
+        }
+
+        .total {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF; /* Nyeupe */
+            margin-top: 30px;
+            background-color: #3B82F6; /* Bluu kwa sehemu ya jumla */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Kijachini */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 16px;
+            color: #3B82F6; /* Bluu kwa maandishi */
+            padding: 15px 0;
+            background-color: #F8FAFC; /* Kijivu nyepesi kwa msingi */
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        /* Ubunifu wa Kujibika */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                font-size: 24px;
+            }
+
+            .total {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Kichwa -->
+        <div class="header">
+            HAZINA YA VITABU
+        </div>
+
+        <h2>Mpendwa {{ username }},</h2>
+        <p>Asante kwa kuweka agizo lako. Hapa chini ni maelezo ya ununuzi wako:</p>
+        <p>Tutawasiliana nawe kwa maelezo zaidi.</p>
+
+        <!-- Orodha ya Maelezo ya Agizo -->
+        <ul class="order-list">
+            {% for item in calculated_items %}
+            <li>
+                <img src="cid:{{ item.image_name }}" alt="{{ item.product_name }}">
+                <p><strong>Jina la Bidhaa:</strong> {{ item.product_name }}</p>
+                <p><strong>Kiasi:</strong> {{ item.quantity }}</p>
+                <p><strong>Bei ya Kila Moja:</strong> {{ item.unit_price|format_currency }}</p>
+                <p><strong>Jumla:</strong> {{ item.total_price|format_currency }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Jumla ya Kila Kitu -->
+        <p class="total">Jumla ya Kila Kitu: {{ grand_total|format_currency }}</p>
+
+        <p><strong>Namba yako ya simu:</strong> {{ customer_phone }}</p>
+        <p>Tutawasiliana nawe kupitia namba hii.</p>
+        
+        <p>Asante kwa agizo lako!</p>
+
+        <!-- Kijachini -->
+        <div class="footer">
+            <p> Hazina ya Vitabu - Soma upate maalifa zaidi.</p>
+        </div>
+    </div>
+
+</body>
+</html>

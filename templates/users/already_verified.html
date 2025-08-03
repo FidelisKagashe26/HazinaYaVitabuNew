@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Already Verified</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+</head>
+<body class="bg-gradient-to-l from-yellow-50 to-yellow-200 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg m-3 shadow-lg w-full max-w-md md:max-w-4xl">
+        <h2 class="text-2xl font-extrabold mb-6 text-center text-yellow-500">Email Already Verified</h2>
+        
+        <div class="space-y-4">
+            <p class="text-gray-700">Your email address is already verified and associated with an active account.</p>
+
+            <p class="text-gray-700">You can <a href="{% url 'login' %}" class="text-yellow-600 hover:underline">log in here</a> to access your account.</p>
+            
+            <div class="mt-4">
+                <a href="{% url 'users:resend_token' email=email %}" class="text-yellow-600 hover:underline">Click here</a> if you would like to resend the verification token.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Already Registered</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+</head>
+
+<body class="bg-gradient-to-l from-yellow-50 to-yellow-200 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg m-3 shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-extrabold mb-6 text-center text-red-500">Error</h2>
+
+        <!-- Error message section -->
+        <div class="mb-4 p-4 rounded bg-red-100 text-red-800 text-center">
+            <p>{{ error_message }}</p>
+        </div>
+
+        <!-- Call to action to go to login page -->
+        <div class="mt-6 text-center">
+            <a href="{% url 'login' %}" class="text-yellow-700 hover:underline">Already registered? Log in here.</a>
+        </div>
+
+        <!-- Option to go back and try another email -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'register_email' %}" class="text-yellow-700 hover:underline">Try another email address</a>
+        </div>
+    </div>
+</body>
+
+</html>

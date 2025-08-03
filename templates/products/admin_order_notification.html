@@ -1,0 +1,111 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order Notification</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #3B3A36; /* Soft dark gray text */
+            margin: 30px;
+            background-color: #F1F5F9; /* Light neutral gray background */
+        }
+
+        h2 {
+            color: #3B82F6; /* Bold blue for headings */
+            font-size: 26px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            color: #3B3A36;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        /* Product List Styles */
+        .product-list {
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #E0E7FF; /* Light blue-gray background */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #FFFFFF; /* White background for items */
+            border: 1px solid #3B82F6; /* Blue border */
+            border-radius: 8px;
+        }
+
+        .product-item img {
+            width: 80px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .product-item p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #3B3A36; /* Gray text */
+        }
+
+        .highlight {
+            color: #1E40AF; /* Dark blue for grand total */
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 20px;
+            }
+            h2 {
+                font-size: 22px;
+            }
+            .product-item {
+                font-size: 14px;
+            }
+            .highlight {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>New Order from {{ username }}</h2>
+    <p><strong>Customer Email:</strong> {{ email }}</p>
+    <p><strong>Customer Phone Number:</strong> {{ customer_phone }}</p>
+    <p><strong>Location:</strong> {{ address }}</p>
+    <p>A new order has been placed. Below are the details:</p>
+
+    <!-- Order Details List -->
+    <div class="product-list">
+        {% for item in calculated_items %}
+        <div class="product-item">
+            <p><strong>Product Image:</strong></p>
+            <img src="{{ item.image_url }}" alt="{{ item.product_name }}">
+            <p><strong>Product Name:</strong> {{ item.product_name }}</p>
+            <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+            <p><strong>Unit Price (Tsh):</strong> {{ item.unit_price|format_currency }}</p>
+            <p><strong>Total Price (Tsh):</strong> {{ item.total_price|format_currency }}</p>
+        </div>
+        {% endfor %}
+        
+        <p class="highlight"><strong>Grand Total:</strong> {{ grand_total|format_currency }}</p>
+    </div>
+
+    <p>Please log in to the admin panel for more details.</p>
+
+</body>
+</html>

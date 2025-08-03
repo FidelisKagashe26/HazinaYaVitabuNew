@@ -1,0 +1,60 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% block header %}
+Fmk Link - About
+{% endblock %}
+{% block main_block %}
+
+<div class="py-8 px-6 md:px-16 bg-yellow-50">
+    <!-- Header Section -->
+    <header class="mb-10 mt-4 pb-6 border-b-2 border-yellow-400">
+        <h1 class="text-4xl font-extrabold text-center text-yellow-800">About <span class="text-yellow-600">Fmk Link</span></h1>
+        <p class="text-center text-lg mt-3 text-gray-700">
+            Discover how we connect customers and businesses across all sectors, creating a seamless experience for everyone.
+        </p>
+    </header>
+
+    <!-- Our Mission Section -->
+    <section class="mb-10">
+        <h2 class="text-3xl font-bold mb-4 text-yellow-700">Our Mission</h2>
+        <p class="text-gray-700 leading-relaxed text-lg">
+            At Fmk Link, we aim to bridge the gap between customers and businesses in all categories. We provide a platform where customers can easily place orders online, and businesses can engage directly with them, ensuring convenience, reliability, and quality service. 
+        </p>
+        <p class="text-gray-700 leading-relaxed text-lg mt-4">
+            Our mission is to empower users and businesses to connect, transact, and build lasting relationships in a seamless online environment.
+        </p>
+    </section>
+
+    <!-- Our Values Section -->
+    <section class="mb-10">
+        <h2 class="text-3xl font-bold mb-4 text-yellow-700">Our Values</h2>
+        <ul class="list-disc list-inside text-gray-700 text-lg space-y-3">
+            <li><strong>Customer-Centric:</strong> We focus on understanding and meeting the needs of our customers.</li>
+            <li><strong>Quality Connections:</strong> We ensure that businesses and customers engage in meaningful and reliable interactions.</li>
+            <li><strong>Transparency:</strong> We foster openness and trust in every transaction between customers and businesses.</li>
+            <li><strong>Collaboration:</strong> We encourage businesses to collaborate and grow alongside their customers.</li>
+        </ul>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="mb-10">
+        <h2 class="text-3xl font-bold mb-4 text-yellow-700">Our Story</h2>
+        <p class="text-gray-700 leading-relaxed text-lg">
+            Fmk Link was founded with the vision of creating a dynamic platform where customers and businesses can easily connect, communicate, and fulfill orders online. 
+        </p>
+        <p class="text-gray-700 leading-relaxed text-lg mt-4">
+            From our humble beginnings, we’ve grown into a trusted platform where businesses and customers build meaningful relationships that drive success.
+        </p>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center mt-8">
+        <p class="text-gray-700 text-lg mb-6">
+            Join us as we connect customers and businesses to create new opportunities and build a better future together.
+        </p>
+        <a href="{% url 'shop' %}" class="inline-block bg-yellow-700 text-white px-8 py-3 rounded-lg text-lg font-medium shadow-md hover:bg-yellow-600 hover:shadow-lg transition">
+            Start Connecting
+        </a>
+    </section>
+</div>
+{% endblock %}

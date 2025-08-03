@@ -1,0 +1,142 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>{% trans "Login" %} - {% trans "Hazina ya Vitabu" %}</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}">
+    <style>
+        :root {
+            {% if theme == 'dark' %}
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --border-color: #404040;
+            {% else %}
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --border-color: #e2e8f0;
+            {% endif %}
+        }
+        
+        body {
+            background: {% if theme == 'dark' %}linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%){% else %}linear-gradient(135deg, #667eea 0%, #764ba2 100%){% endif %};
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-8 rounded-lg m-3 shadow-xl w-full max-w-md border">
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-extrabold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %}">{% trans "Welcome Back" %}</h2>
+            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %} mt-2">{% trans "Sign in to your account" %}</p>
+        </div>
+
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded bg-red-100 text-red-800 border border-red-300 text-center" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="mb-4 p-4 rounded bg-red-100 text-red-800 border border-red-300">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <p class="text-sm">{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4" autocomplete="off">
+            {% csrf_token %}
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Username" %}</label>
+                <input 
+                    type="text" 
+                    name="username" 
+                    maxlength="150" 
+                    required 
+                    id="{{ form.username.id_for_label }}" 
+                    placeholder="{% trans 'Enter your username' %}" 
+                    class="mt-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded w-full focus:outline-none" 
+                    autocomplete="off" 
+                    aria-label="{% trans 'Username' %}"
+                >
+            </div>
+            <div class="relative">
+                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Password" %}</label>
+                <div class="relative flex items-center">
+                    <input 
+                    type="password" 
+                    name="password" 
+                    required 
+                    id="{{ form.password.id_for_label }}" 
+                    placeholder="{% trans 'Enter your password' %}" 
+                    class="mt-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded w-full focus:outline-none" 
+                    autocomplete="new-password"
+                    aria-label="{% trans 'Password' %}"
+                    >
+                    <span class="absolute inset-y-0 right-3 flex items-center justify-center cursor-pointer" onclick="togglePasswordVisibility()">
+                        <!-- Bootstrap Icons eye icon -->
+                        <i id="togglePasswordIcon" class="bi bi-eye-slash {% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %}"></i>
+                    </span>
+                </div>
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium"
+            >
+                {% trans "Sign In" %}
+            </button>
+        </form>
+
+
+        <div class="mt-6 text-center">
+            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">
+                {% trans "Don't have an account?" %}
+                <a href="{% url 'register' %}" class="{% if theme == 'dark' %}text-blue-400 hover:text-blue-300{% else %}text-blue-600 hover:text-blue-700{% endif %} font-medium">{% trans "Sign up" %}</a>
+            </p>
+            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %} mt-2">
+                <a href="{% url 'password_reset_request' %}" class="{% if theme == 'dark' %}text-blue-400 hover:text-blue-300{% else %}text-blue-600 hover:text-blue-700{% endif %} font-medium">{% trans "Forgot Password?" %}</a>
+            </p>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="{% if theme == 'dark' %}text-gray-400 hover:text-gray-300{% else %}text-gray-600 hover:text-gray-700{% endif %} text-sm">
+                <i class="bi bi-arrow-left mr-1"></i>{% trans "Back to Home" %}
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye'); // Change to "eye" icon when password is visible
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash'); // Change to "eye-slash" icon when password is hidden
+            }
+        }
+    </script>
+</body>
+</html>

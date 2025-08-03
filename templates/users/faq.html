@@ -1,0 +1,64 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% block header %}
+Fmk Link - FAQ
+{% endblock %}
+{% block main_block %}
+<div class="py-8 px-6 md:px-16 bg-yellow-50">
+    <!-- Header Section -->
+    <header class="mb-8 mt-4 pb-6 border-b-2 border-yellow-400">
+        <h1 class="text-4xl font-extrabold text-center text-yellow-800">Frequently <span class="text-yellow-600">Asked Questions</span></h1>
+        <p class="text-center text-lg mt-3 text-gray-700">
+            Find answers to the most common questions about connecting with businesses and placing orders.
+        </p>
+    </header>
+
+    <!-- FAQ Section -->
+    <section class="space-y-8">
+        <!-- Question Block Template -->
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">1. How does Fmk Link help customers and businesses connect?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Fmk Link provides a platform where customers can easily place orders from a variety of businesses listed together. After placing an order, businesses can directly communicate with customers through email, ensuring a smooth and personal interaction.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">2. Can businesses customize their profiles on Fmk Link?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Yes, businesses can create detailed profiles showcasing their services or products. This helps customers make informed decisions when selecting the right business for their needs.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">3. How can I place an order on Fmk Link?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Placing an order is simple: browse through the listings of businesses and select the products or services you need. After selecting your items, you can proceed with placing the order, and the business will contact you directly via email for further communication.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">4. How do I make payment for my order?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Currently, payments are handled in person, and customers can pay directly to the business once the order is confirmed. Businesses will provide details on how and where to complete the payment.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">5. How can I contact customer support?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                If you have any questions or issues regarding your order, you can reach out to customer support via email at 
+                <a href="mailto:fmklink@gmail.com" class="text-yellow-600 underline hover:text-yellow-800">fmklink@gmail.com</a>. 
+                You can also contact us by phone at <strong>0767525234</strong> or <strong>0658625234</strong>. We are available to assist you with any inquiries you may have.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+            <h2 class="text-2xl font-semibold mb-3 text-yellow-700">6. How can businesses contact their customers?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Businesses can communicate directly with customers via Gmail. After an order is placed, the business will reach out through email for order confirmation, delivery details, or any other necessary communication.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}

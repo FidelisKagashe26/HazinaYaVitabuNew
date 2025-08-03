@@ -1,0 +1,109 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Register" %} - {% trans "Hazina ya Vitabu" %}</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}">
+    <style>
+        :root {
+            {% if theme == 'dark' %}
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --border-color: #404040;
+            {% else %}
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --border-color: #e2e8f0;
+            {% endif %}
+        }
+        
+        body {
+            background: {% if theme == 'dark' %}linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%){% else %}linear-gradient(135deg, #667eea 0%, #764ba2 100%){% endif %};
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-8 rounded-lg m-3 shadow-xl w-full max-w-md border">
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-extrabold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %}">{% trans "Create Account" %}</h2>
+            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %} mt-2">{% trans "Join Hazina ya Vitabu today" %}</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="mb-4 p-4 rounded bg-red-100 text-red-800 border border-red-300">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <p class="text-sm">{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "First Name" %}</label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Last Name" %}</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Username" %}</label>
+                {{ form.username }}
+            </div>
+            
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Email" %}</label>
+                {{ form.email }}
+            </div>
+            
+            <div>
+                <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Phone Number" %}</label>
+                {{ form.phone_number }}
+            </div>
+            
+            <div>
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Password" %}</label>
+                {{ form.password1 }}
+            </div>
+            
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Confirm Password" %}</label>
+                {{ form.password2 }}
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
+                {% trans "Create Account" %}
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">
+                {% trans "Already have an account?" %}
+                <a href="{% url 'login' %}" class="{% if theme == 'dark' %}text-blue-400 hover:text-blue-300{% else %}text-blue-600 hover:text-blue-700{% endif %} font-medium">{% trans "Sign in" %}</a>
+            </p>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="{% if theme == 'dark' %}text-gray-400 hover:text-gray-300{% else %}text-gray-600 hover:text-gray-700{% endif %} text-sm">
+                <i class="bi bi-arrow-left mr-1"></i>{% trans "Back to Home" %}
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+{% extends 'users/home.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block header %}
+{% trans "Manage Users" %} - {% trans "Hazina ya Vitabu" %}
+{% endblock %}
+
+{% block main_block %}
+<div class="py-8 px-6 md:px-16 {% if theme == 'dark' %}bg-gray-900{% else %}bg-gray-50{% endif %}">
+    <!-- Header Section -->
+    <header class="mb-8 mt-4 pb-6 border-b-2 {% if theme == 'dark' %}border-blue-400{% else %}border-blue-400{% endif %}">
+        <h1 class="text-4xl font-extrabold text-center {% if theme == 'dark' %}text-blue-400{% else %}text-blue-800{% endif %}">{% trans "Manage Users" %}</h1>
+        <p class="text-center text-lg mt-3 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">
+            {% trans "Create and manage system users" %}
+        </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Create User Form -->
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+            <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Create New User" %}</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-300{% else %}bg-red-100 text-red-800 border border-red-300{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "First Name" %}</label>
+                        <input type="text" name="first_name" id="first_name" 
+                               class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                               required>
+                    </div>
+                    
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Last Name" %}</label>
+                        <input type="text" name="last_name" id="last_name" 
+                               class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                               required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="username" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Username" %}</label>
+                    <input type="text" name="username" id="username" 
+                           class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                           required>
+                </div>
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Email" %}</label>
+                    <input type="email" name="email" id="email" 
+                           class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                           required>
+                </div>
+                
+                <div>
+                    <label for="phone_number" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Phone Number" %}</label>
+                    <input type="text" name="phone_number" id="phone_number" 
+                           class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                           placeholder="+255XXXXXXXXX">
+                </div>
+                
+                <div>
+                    <label for="role" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Role" %}</label>
+                    <select name="role" id="role" 
+                            class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                            required>
+                        <option value="buyer">{% trans "Buyer" %}</option>
+                        <option value="seller">{% trans "Seller" %}</option>
+                        <option value="superuser">{% trans "Superuser" %}</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Password" %}</label>
+                    <input type="password" name="password" id="password" 
+                           class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
+                           required>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
+                    {% trans "Create User" %}
+                </button>
+            </form>
+        </div>
+
+        <!-- Users List -->
+        <div class="lg:col-span-2 {% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+            <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "All Users" %}</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="{% if theme == 'dark' %}bg-gray-700{% else %}bg-gray-50{% endif %}">
+                        <tr>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Name" %}</th>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Username" %}</th>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Email" %}</th>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Role" %}</th>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Status" %}</th>
+                            <th class="px-4 py-2 text-left {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Joined" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="{% if theme == 'dark' %}border-gray-700{% else %}border-gray-200{% endif %} border-b">
+                            <td class="px-4 py-2 {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{{ user.first_name }} {{ user.last_name }}</td>
+                            <td class="px-4 py-2 {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{{ user.username }}</td>
+                            <td class="px-4 py-2 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{{ user.email }}</td>
+                            <td class="px-4 py-2">
+                                {% if user.userprofile %}
+                                    <span class="px-2 py-1 rounded text-xs font-medium
+                                        {% if user.userprofile.role == 'seller' %}bg-green-100 text-green-800
+                                        {% elif user.userprofile.role == 'buyer' %}bg-blue-100 text-blue-800
+                                        {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                        {{ user.userprofile.get_role_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">{% trans "No Role" %}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2">
+                                {% if user.userprofile and user.userprofile.is_active %}
+                                    <span class="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">{% trans "Active" %}</span>
+                                {% else %}
+                                    <span class="px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">{% trans "Inactive" %}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{{ user.date_joined|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-6 text-center">
+        <a href="{% url 'superuser_dashboard' %}" class="{% if theme == 'dark' %}text-gray-400 hover:text-gray-300{% else %}text-gray-600 hover:text-gray-700{% endif %} text-sm">
+            <i class="bi bi-arrow-left mr-1"></i>{% trans "Back to Dashboard" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "users/home.html" %}
+{% load static %}
+{% load custom_filters %}
+{% load i18n %}
+
+{% block header %}
+{% trans "Hazina ya Vitabu" %} - {{ product.name }} {% trans "Details" %}
+{% endblock %}
+
+{% block main_block %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 {% if theme == 'dark' %}bg-gray-900{% endif %}">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Product Image -->
+        <div class="flex justify-center">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded-lg shadow-xl max-w-full h-auto object-cover {% if theme == 'dark' %}border border-gray-700{% endif %}">
+        </div>
+
+        <!-- Product Information -->
+        <div class="flex flex-col mx-3 justify-start">
+            <!-- Product Name -->
+            <h1 class="text-3xl sm:text-4xl font-extrabold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-900{% endif %} mb-4">{{ product.name }}</h1>
+
+            <!-- Product Description -->
+            <p class="text-lg {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} leading-relaxed mb-6">{{ product.description }}</p>
+
+            <!-- Product Price -->
+            <p class="text-2xl font-semibold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-900{% endif %} mb-6">{% trans "Kiasi" %}: {{ product.price|format_currency }}</p>
+            
+            <!-- Stock Information -->
+            <p class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %} mb-4">
+                {% if product.stock > 0 %}
+                    <i class="bi bi-check-circle text-green-500 mr-1"></i>{% trans "In Stock" %} ({{ product.stock }} {% trans "available" %})
+                {% else %}
+                    <i class="bi bi-x-circle text-red-500 mr-1"></i>{% trans "Out of Stock" %}
+                {% endif %}
+            </p>
+
+            <!-- Add to Cart Section -->
+            {% if product.stock > 0 %}
+            <div class="flex flex-col sm:flex-row sm:space-x-4 mb-6">
+                <form class="add-to-cart-form flex items-center w-full sm:w-auto" data-product-id="{{ product.id }}">
+                    {% csrf_token %}
+                    <div class="flex items-center mb-4 sm:mb-0">
+                        <label for="quantity" class="text-lg {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} mr-3">{% trans "Idadi" %}:</label>
+                        <input type="number" id="quantity" name="quantity" min="1" max="{{ product.stock }}" value="1" class="border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded-lg p-3 w-24 text-center focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-500 transition ease-in-out duration-200 font-medium">
+                        <i class="bi bi-cart-plus mr-2"></i>{% trans "Ongeza kitengani" %}
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="mb-6">
+                <button disabled class="w-full sm:w-auto bg-gray-400 text-white py-3 px-6 rounded-lg shadow-lg cursor-not-allowed font-medium">
+                    <i class="bi bi-x-circle mr-2"></i>{% trans "Out of Stock" %}
+                </button>
+            </div>
+            {% endif %}
+
+            <!-- Back to Products Link -->
+            <div class="mt-6 text-center">
+                <a href="{% url 'shop' %}" class="text-lg {% if theme == 'dark' %}bg-gray-700 text-blue-400 hover:bg-gray-600{% else %}bg-blue-200 text-blue-900 hover:text-blue-600{% endif %} p-3 rounded font-semibold transition duration-200">
+                    <i class="bi bi-arrow-left mr-2"></i>{% trans "Rudi kwenye orodha" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Messages Display -->
+<div id="message-container" class="fixed top-20 right-4 z-50"></div>
+
+<!-- JavaScript to Handle Add to Cart -->
+<script>
+    document.querySelector('.add-to-cart-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const productId = this.getAttribute('data-product-id');
+        const quantity = this.querySelector('[name="quantity"]').value;  // Get quantity from input
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+    
+        // Ensure quantity is a valid integer and greater than 0
+        if (parseInt(quantity) <= 0 || isNaN(quantity)) {
+            showMessage("{% trans 'Please enter a valid quantity (greater than 0).' %}", 'error');
+            return;
+        }
+        
+        // Disable button and show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="bi bi-spinner-border animate-spin mr-2"></i>{% trans "Adding..." %}';
+    
+        fetch("{% url 'add_to_cart' 0 %}".replace('0', productId), {
+            method: 'POST',
+            body: new FormData(this),
+            headers: {
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+            
+            if (data.error) {
+                showMessage(data.error, 'error');
+            } else {
+                showMessage(data.message, 'success');
+    
+                // Update cart item count and total dynamically
+                if (data.cart_item_count !== undefined) {
+                    document.getElementById('cart-item-count').textContent = data.cart_item_count;
+                    animateCartItemCount();  // Trigger animation when the cart item count is updated
+                }
+            }
+        })
+        .catch(error => {
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+            
+            console.error('Error adding product to cart:', error);
+            showMessage("{% trans 'An error occurred. Please try again.' %}", 'error');
+        });
+    });
+
+    // Function to show messages
+    function showMessage(message, type) {
+        const container = document.getElementById('message-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `p-4 rounded-lg shadow-lg mb-2 transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        messageDiv.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span>${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(messageDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (messageDiv.parentElement) {
+                messageDiv.remove();
+            }
+        }, 5000);
+    }
+
+    // Function to trigger shine animation
+    function animateCartItemCount() {
+        const cartItemCount = document.getElementById('cart-item-count');
+        const cartLink = document.querySelector('a[aria-label="View cart"]');
+        
+        // Add the shine animation class
+        cartLink.classList.add('shine-animation');
+
+        // Remove the class after the animation duration
+        setTimeout(() => {
+            cartLink.classList.remove('shine-animation');
+        }, 1000); // Animation duration (1 second)
+    }
+</script>
+
+{% endblock %}

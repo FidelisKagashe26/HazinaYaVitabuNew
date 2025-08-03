@@ -1,0 +1,216 @@
+{% extends "users/home.html" %}
+{% load custom_filters %}
+
+{% load static %}
+
+{% block header %}
+Hazina ya vitabu - Weka Agizo
+{% endblock %}
+
+{% block main_block %}
+<div class="text-center bg-blue-100 py-3 mt-2 border-b-2 border-blue-700">
+    <h1 class="text-2xl font-bold text-blue-800">
+        Weka Agizo
+    </h1>
+</div>
+<div class="bg-white m-6 p-6 rounded-lg shadow-md w-full max-w-lg mx-auto">
+    <!-- Onyesho la Vitu vya Gurudumu -->
+    <ul class="space-y-4">
+        {% for item in cart_items %}
+            <li class="flex justify-between items-center border-b pb-2">
+                <span class="flex items-center">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="h-12 w-12 mr-4 rounded">
+                    <div>
+                        <p>{{ item.product.name }}</p>
+                        <p class="text-sm text-gray-600">
+                            {{ item.product.price|format_currency }} x {{ item.quantity }} = 
+                            <strong>{{ item.total_price|format_currency }}</strong>
+                        </p>
+                    </div>
+                </span>
+            </li>
+        {% empty %}
+            <li class="text-gray-500 text-center">Gurudumu lako ni tupu.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Onyesho la Jumla ya Bei -->
+    {% if cart_items %}
+    <div class="font-bold border-b border-gray-400 pb-3 text-lg mt-4 text-right">
+        Jumla: {{ total_sum|format_currency }}
+    </div>
+    {% endif %}
+
+    <!-- Fomu ya Mahali -->
+    {% if cart_items %}
+    <div class="mt-6">
+        <h2 class="text-xl text-center font-semibold text-blue-800 mb-4">Ingiza taarifa zako</h2>
+    
+        <form method="POST" action="{% url 'place_order' %}" class="space-y-4">
+            {% csrf_token %}
+            {% if error_message %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                {{ error_message }}
+            </div>
+            {% endif %}
+
+            {% if not user.is_authenticated %}
+            <!-- Sehemu ya Jina -->
+            <div>
+                <label for="city" class="block text-sm font-medium text-gray-700">Jina:</label>
+                <input type="text" id="city" name="city" class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500" placeholder="Mfano, Mussa Daniel" required>
+                {% if form.city.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.city.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Sehemu ya Anuani -->
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Mahali:</label>
+                <input type="text" id="address" name="address" class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500" placeholder="Mfano, Dodoma, UDOM, CIVE, 1A-S39" required>
+                {% if form.address.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.address.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Sehemu ya Barua pepe -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Anuani ya Barua pepe:</label>
+                <input type="email" id="email" name="email" class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500" placeholder="Mfano, mfano@gmail.com" required>
+                {% if form.email.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Sehemu ya Namba ya Simu -->
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Namba ya Simu:</label>
+                <input type="tel" id="phone" name="phone" class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500" placeholder="Mfano, +255711223344" required oninput="validatePhoneNumber(event)">
+                {% if form.phone.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <!-- For authenticated users, use their profile information -->
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <h3 class="text-lg font-semibold text-blue-800 mb-2">Taarifa zako za akaunti:</h3>
+                <p><strong>Jina:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><strong>Barua pepe:</strong> {{ user.email }}</p>
+                {% if user_profile %}
+                <p><strong>Namba ya simu:</strong> {{ user_profile.phone_number }}</p>
+                {% endif %}
+                <p class="text-sm text-blue-600 mt-2">
+                    <a href="{% url 'profile' %}" class="underline">Badilisha taarifa zako hapa</a>
+                </p>
+            </div>
+            
+            <!-- Hidden fields for authenticated users -->
+            <input type="hidden" name="city" value="{{ user.first_name }} {{ user.last_name }}">
+            <input type="hidden" name="email" value="{{ user.email }}">
+            {% if user_profile %}
+            <input type="hidden" name="phone" value="{{ user_profile.phone_number }}">
+            {% endif %}
+            
+            <!-- Only show address field for authenticated users -->
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Mahali pa kupokea:</label>
+                <input type="text" id="address" name="address" class="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500" placeholder="Mfano, Dodoma, UDOM, CIVE, 1A-S39" required>
+            </div>
+            {% endif %}
+    
+            <!-- Kitufe cha Kutuma -->
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-500 transition duration-200">
+                Weka Agizo
+            </button>
+        </form>
+    </div>
+    
+    {% else %}
+    <div class="mt-6 text-center">
+        <a href="{% url 'home' %}" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500">
+            Endelea na Ununuzi
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Real-time phone number validation
+    function validatePhoneNumber(event) {
+        const inputField = event.target;
+        let phoneNumber = inputField.value.trim();
+
+        // Remove any invalid characters (letters or symbols except '+')
+        phoneNumber = phoneNumber.replace(/[^0-9+]/g, '');
+
+        // If the phone number starts with a '0', remove it and add the '+255' prefix
+        if (phoneNumber.startsWith('0')) {
+            phoneNumber = '+255' + phoneNumber.slice(1); // Remove leading '0' and add '+255'
+        }
+
+        // Automatically add '+255' if the number starts with '6' or '7' and does not start with '+255'
+        if ((phoneNumber.startsWith('6') || phoneNumber.startsWith('7')) && !phoneNumber.startsWith('+255')) {
+            phoneNumber = '+255' + phoneNumber; // Add '+255' for Tanzanian numbers
+        }
+
+        // Check if the phone number starts with '+2550' and remove the '0' after '+255'
+        if (phoneNumber.startsWith('+2550')) {
+            phoneNumber = '+255' + phoneNumber.slice(4); // Remove '0' after '+255'
+        }
+
+        // Limit the length of the phone number to 13 characters
+        if (phoneNumber.length > 13) {
+            phoneNumber = phoneNumber.slice(0, 13); // Trim to 13 digits if the user types more
+        }
+
+        // Validate phone number format: must start with +2556 or +2557 and be 13 digits long
+        if (phoneNumber.length === 13) {
+            if (phoneNumber.startsWith('+2556') || phoneNumber.startsWith('+2557')) {
+                inputField.classList.remove('border-red-500'); // Remove red border if valid
+                inputField.setCustomValidity(''); // Reset custom validity if valid
+            } else {
+                inputField.classList.add('border-red-500'); // Highlight the field with red border
+                inputField.setCustomValidity('Phone number must start with +2556 or +2557.');
+            }
+        } else {
+            inputField.classList.add('border-red-500'); // Highlight the field with red border
+            inputField.setCustomValidity('Phone number must be exactly 13 digits long.');
+        }
+
+        // Update the input field value with the formatted phone number
+        inputField.value = phoneNumber;
+    }
+
+    // Real-time form validation without waiting for submission
+    document.getElementById('registrationForm').addEventListener('submit', function (event) {
+        const phoneNumberField = document.getElementById('id_phone_number');
+        const phoneNumber = phoneNumberField.value.trim();
+        let isValid = true;
+
+        // Validate phone number format on form submission
+        if (phoneNumber.length !== 13) {
+            isValid = false;
+            phoneNumberField.classList.add('border-red-500');
+            alert('Phone number must be exactly 13 digits long.');
+        } else if (!phoneNumber.startsWith('+2556') && !phoneNumber.startsWith('+2557')) {
+            isValid = false;
+            phoneNumberField.classList.add('border-red-500');
+            alert('Phone number must start with +2556 or +2557.');
+        } else if (/[^0-9+]/.test(phoneNumber)) {
+            isValid = false;
+            phoneNumberField.classList.add('border-red-500');
+            alert('Phone number must only contain digits and the "+" sign.');
+        } else {
+            phoneNumberField.classList.remove('border-red-500');
+        }
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            event.preventDefault();
+            alert('Please ensure the phone number is formatted correctly.');
+        }
+    });
+</script>
+
+
+{% endblock %}
