@@ -58,7 +58,7 @@ ROOT_URLCONF = 'shopping_center.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [ BASE_DIR / 'templates' ],         # <-- Path object
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,21 +144,14 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Add these lines to your settings.py
-MEDIA_URL = '/media/'  # URL to access media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory to store uploaded files
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [ BASE_DIR / 'static' ]       # <-- Path object
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Additional locations for static files
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Logging Configuration
 LOGGING = {

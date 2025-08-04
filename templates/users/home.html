@@ -1,778 +1,559 @@
 {% load static %}
 {% load custom_filters %}
 {% load i18n %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hazina ya Vitabu - Your Digital Book Treasury">
+    <meta name="description" content="A brief description of your webpage's content.">
     <meta name="author" content="GROW UP">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#b45309">
+
     <title>{% block header %}{% trans "Hazina ya Vitabu" %}{% endblock %}</title>
+
     <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}">
     
+    <!-- Theme Variables -->
     <style>
         :root {
             /* Light theme variables */
             --bg-primary-light: #ffffff;
             --bg-secondary-light: #f8fafc;
-            --bg-tertiary-light: #f1f5f9;
-            --text-primary-light: #0f172a;
-            --text-secondary-light: #475569;
-            --text-muted-light: #64748b;
+            --text-primary-light: #1a1a1a;
+            --text-secondary-light: #4a5568;
             --border-color-light: #e2e8f0;
             --accent-color-light: #3b82f6;
-            --accent-hover-light: #2563eb;
-            --success-light: #10b981;
-            --warning-light: #f59e0b;
-            --error-light: #ef4444;
-            --shadow-light: rgba(0, 0, 0, 0.1);
-            --shadow-hover-light: rgba(0, 0, 0, 0.15);
-            
+
             /* Dark theme variables */
-            --bg-primary-dark: #0f172a;
-            --bg-secondary-dark: #1e293b;
-            --bg-tertiary-dark: #334155;
-            --text-primary-dark: #f8fafc;
-            --text-secondary-dark: #cbd5e1;
-            --text-muted-dark: #94a3b8;
-            --border-color-dark: #475569;
+            --bg-primary-dark: #1a1a1a;
+            --bg-secondary-dark: #2d2d2d;
+            --text-primary-dark: #ffffff;
+            --text-secondary-dark: #e5e5e5;
+            --border-color-dark: #404040;
             --accent-color-dark: #3b82f6;
-            --accent-hover-dark: #60a5fa;
-            --success-dark: #10b981;
-            --warning-dark: #f59e0b;
-            --error-dark: #ef4444;
-            --shadow-dark: rgba(0, 0, 0, 0.3);
-            --shadow-hover-dark: rgba(0, 0, 0, 0.4);
         }
 
         body.light-theme {
             --bg-primary: var(--bg-primary-light);
             --bg-secondary: var(--bg-secondary-light);
-            --bg-tertiary: var(--bg-tertiary-light);
             --text-primary: var(--text-primary-light);
             --text-secondary: var(--text-secondary-light);
-            --text-muted: var(--text-muted-light);
             --border-color: var(--border-color-light);
             --accent-color: var(--accent-color-light);
-            --accent-hover: var(--accent-hover-light);
-            --success-color: var(--success-light);
-            --warning-color: var(--warning-light);
-            --error-color: var(--error-light);
-            --shadow: var(--shadow-light);
-            --shadow-hover: var(--shadow-hover-light);
         }
 
         body.dark-theme {
             --bg-primary: var(--bg-primary-dark);
             --bg-secondary: var(--bg-secondary-dark);
-            --bg-tertiary: var(--bg-tertiary-dark);
             --text-primary: var(--text-primary-dark);
             --text-secondary: var(--text-secondary-dark);
-            --text-muted: var(--text-muted-dark);
             --border-color: var(--border-color-dark);
             --accent-color: var(--accent-color-dark);
-            --accent-hover: var(--accent-hover-dark);
-            --success-color: var(--success-dark);
-            --warning-color: var(--warning-dark);
-            --error-color: var(--error-dark);
-            --shadow: var(--shadow-dark);
-            --shadow-hover: var(--shadow-hover-dark);
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        
+        .theme-bg-secondary {
+            background-color: var(--bg-secondary);
         }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+        
+        .theme-text-secondary {
+            color: var(--text-secondary);
         }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
+        
+        .theme-border {
+            border-color: var(--border-color);
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* Theme utility classes */
-        .theme-bg-primary { background-color: var(--bg-primary); }
-        .theme-bg-secondary { background-color: var(--bg-secondary); }
-        .theme-bg-tertiary { background-color: var(--bg-tertiary); }
-        .theme-text-primary { color: var(--text-primary); }
-        .theme-text-secondary { color: var(--text-secondary); }
-        .theme-text-muted { color: var(--text-muted); }
-        .theme-border { border-color: var(--border-color); }
-        .theme-accent { color: var(--accent-color); }
-        .theme-bg-accent { background-color: var(--accent-color); }
-
-        /* Enhanced animations */
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-100%); opacity: 0; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-            40%, 43% { transform: translateY(-8px); }
-            70% { transform: translateY(-4px); }
-            90% { transform: translateY(-2px); }
-        }
-
-        /* Cart badge animation */
-        .cart-badge {
-            animation: pulse 0.6s ease-in-out;
-        }
-
-        .cart-shine {
-            animation: bounce 0.8s ease-in-out;
-        }
-
-        /* Navbar enhancements */
-        .navbar {
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .dark-theme .navbar {
-            background: rgba(15, 23, 42, 0.95);
-        }
-
-        /* Button hover effects */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            border: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px var(--shadow-hover);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        /* Sidebar enhancements */
-        .sidebar {
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.98);
-            border-right: 1px solid var(--border-color);
-        }
-
-        .dark-theme .sidebar {
-            background: rgba(30, 41, 59, 0.98);
-        }
-
-        /* Dropdown animations */
-        .dropdown-menu {
-            animation: fadeIn 0.2s ease-out;
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid var(--border-color);
-        }
-
-        .dark-theme .dropdown-menu {
-            background: rgba(30, 41, 59, 0.98);
-        }
-
-        /* Mobile responsive adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100% !important;
-            }
-            
-            .navbar-brand {
-                font-size: 1.25rem !important;
-            }
-            
-            .nav-link {
-                padding: 0.75rem 1rem;
-            }
-        }
-
-        /* Focus styles for accessibility */
-        button:focus,
-        a:focus,
-        input:focus {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
-        }
-
-        /* Loading states */
-        .loading {
-            position: relative;
-            pointer-events: none;
-        }
-
-        .loading::after {
-            content: '';
+    </style>
+    
+    <style>
+        /* Styling for the cart item count */
+        #cart-item-count {
+            background-color: rgb(9, 166, 228); /* blue background */
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 9999px; /* Round shape */
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 16px;
-            height: 16px;
-            margin: -8px 0 0 -8px;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            top: 0;
+            right: 0;
+        }
+    
+        /* Shine animation effect */
+        .shine-animation #cart-item-count {
+            animation: shine 1s ease-in-out;
+        }
+    
+        @keyframes shine {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    
+    <style>
+        body {
+          overflow-x: hidden;
+        }
+        .carousel-item {
+            transition: transform 0.5s ease-in-out;
+        }
+    </style>
+    
+    <style>
+        .animate-shine {
+            animation: shine-animation 0.5s ease-in-out;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .dropdown-icon {
+            display: inline-block;
+            transition: transform 0.2s ease-in-out;
+        }
+    
+        @keyframes shine-animation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
-        /* Enhanced shadow system */
-        .shadow-card {
-            box-shadow: 0 4px 6px -1px var(--shadow), 0 2px 4px -1px var(--shadow);
+        /* Sidebar and Navbar customizations */
+        @media (min-width: 768px) {
+            .sidebar-sticky {
+                position: sticky;
+                top: 48px;
+                height: calc(100vh - 48px);
+                z-index: 1;
+            }
         }
 
-        .shadow-card:hover {
-            box-shadow: 0 10px 15px -3px var(--shadow-hover), 0 4px 6px -2px var(--shadow-hover);
+        /* Navbar adjustments */
+        .navbar-brand {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.25);
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25);
         }
 
-        /* User dropdown specific styles */
-        #user-dropdown-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
+        /* Navbar sticky effect */
+        header.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
 
-        #user-dropdown-menu {
-            transform: scale(0.95);
-            transform-origin: top right;
+        /* Sidebar Toggle visibility */
+        .sidebar-hidden {
+            display: none;
         }
 
-        /* Typography improvements */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 700;
-            line-height: 1.25;
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        /* Smooth transition for sidebar */
+        .transition-all {
+            transition: all 0.3s ease;
         }
     </style>
 </head>
+<body class="flex flex-col min-h-screen {% if theme == 'dark' %}dark-theme bg-gray-900 text-white{% else %}light-theme bg-white text-gray-900{% endif %}">
 
-<body class="flex flex-col min-h-screen {% if theme == 'dark' %}dark-theme{% else %}light-theme{% endif %}">
-    <!-- Navigation Bar -->
-    <nav class="navbar fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-3">
-        <div class="flex justify-between items-center w-full max-w-7xl mx-auto">
-            <!-- Left Section -->
-            <div class="flex items-center space-x-4">
-                <!-- Sidebar Toggle -->
-                <button 
-                    id="toggle-sidebar" 
-                    class="p-2 rounded-lg theme-text-primary hover:theme-bg-secondary transition-all duration-300 transform hover:scale-110 focus:scale-95"
-                    aria-label="Toggle sidebar"
-                >
-                    <i class="bi bi-list text-xl"></i>
-                </button>
-                
-                <!-- Brand -->
-                <div class="flex items-center space-x-2">
-                    <i class="bi bi-book text-2xl theme-accent"></i>
-                    <h1 class="text-xl md:text-2xl font-bold text-gradient">
-                        {% trans "Hazina ya Vitabu" %}
-                    </h1>
-                </div>
-            </div>
-
-            <!-- Center Navigation (Desktop) -->
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="{% url 'home' %}" 
-                   class="nav-link flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 {% if current_tab == 'home' %}theme-bg-accent text-white{% else %}theme-text-secondary hover:theme-text-primary hover:theme-bg-secondary{% endif %}">
-                    <i class="bi bi-house{% if current_tab == 'home' %}-fill{% endif %}"></i>
-                    <span>{% trans "Nyumbani" %}</span>
+    <nav class="{% if theme == 'dark' %}bg-gray-800 text-blue-400{% else %}bg-white text-blue-500{% endif %} flex justify-between items-center px-4 md:px-6 py-2 fixed top-0 left-0 w-full z-50 shadow-lg">
+        <div class="flex items-center">
+            <!-- Sidebar Toggle Button -->
+            <button id="toggle-sidebar" class="{% if theme == 'dark' %}text-blue-400 hover:text-blue-300{% else %}text-blue-700 hover:text-blue-500{% endif %} text-3xl mr-4 transition duration-300">
+                &#9776;
+            </button>
+            <!-- Brand Name -->
+            <span class="md:text-2xl font-extrabold tracking-wide {% if theme == 'dark' %}text-blue-300{% else %}text-blue-900{% endif %}">{% trans "Hazina ya Vitabu" %}</span>
+        </div>
+    
+        <!-- Navigation Links (Hidden on Mobile) -->
+        <ul class="hidden md:flex space-x-8 text-lg font-medium relative">
+            {% if current_tab == 'home' %}
+            <li class="relative">
+                <a href="{% url 'home' %}" class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-500{% endif %}">
+                    <i class="bi bi-house-fill"></i> {% trans "Nyumbani" %}
                 </a>
-                
-                <a href="{% url 'shop' %}" 
-                   class="nav-link flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 {% if current_tab == 'shop' %}theme-bg-accent text-white{% else %}theme-text-secondary hover:theme-text-primary hover:theme-bg-secondary{% endif %}">
-                    <i class="bi bi-bag{% if current_tab == 'shop' %}-fill{% endif %}"></i>
-                    <span>{% trans "Dukani" %}</span>
+                <!-- Line under the active link -->
+                <span class="absolute left-0 right-0 h-1 {% if theme == 'dark' %}bg-blue-400{% else %}bg-blue-400{% endif %} -bottom-3"></span>
+            </li>
+            {% else %}
+            <li>
+                <a href="{% url 'home' %}" class="{% if theme == 'dark' %}hover:text-blue-400 text-blue-300{% else %}hover:text-blue-500 text-blue-900{% endif %} transition duration-300">
+                    <i class="bi bi-house"></i> {% trans "Nyumbani" %}
                 </a>
-            </nav>
-
-            <!-- Right Section -->
-            <div class="flex items-center space-x-3">
-                <!-- Language Switcher -->
-                <div class="hidden sm:flex items-center space-x-1 theme-bg-secondary rounded-lg p-1">
-                    <a href="{% url 'set_language' 'en' %}" 
-                       class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-300 {% if LANGUAGE_CODE == 'en' %}theme-bg-accent text-white{% else %}theme-text-muted hover:theme-text-primary{% endif %}">
-                        EN
-                    </a>
-                    <a href="{% url 'set_language' 'sw' %}" 
-                       class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-300 {% if LANGUAGE_CODE == 'sw' %}theme-bg-accent text-white{% else %}theme-text-muted hover:theme-text-primary{% endif %}">
-                        SW
-                    </a>
-                </div>
-
-                <!-- Theme Toggle -->
-                <button 
-                    onclick="toggleTheme()" 
-                    class="p-2 rounded-lg theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300 transform hover:scale-110"
-                    title="{% trans 'Toggle Theme' %}"
-                    aria-label="Toggle theme"
-                >
-                    {% if theme == 'dark' %}
-                        <i class="bi bi-sun text-lg"></i>
-                    {% else %}
-                        <i class="bi bi-moon text-lg"></i>
-                    {% endif %}
-                </button>
-
-                <!-- User Menu -->
-                {% if user.is_authenticated %}
-                <div class="relative group">
-                    <button id="user-menu-button" onclick="toggleUserMenu()" class="flex items-center space-x-2 p-2 rounded-lg theme-bg-secondary hover:theme-bg-tertiary transition-all duration-300 transform hover:scale-105">
-                        <div class="w-8 h-8 rounded-full theme-bg-accent flex items-center justify-center text-white text-sm font-bold">
-                            {{ user.first_name.0|default:user.username.0|upper }}
-                        </div>
-                        <span class="hidden md:block theme-text-primary font-medium">
-                            {{ user.first_name|default:user.username }}
-                        </span>
-                        <i id="user-menu-chevron" class="bi bi-chevron-down text-sm theme-text-muted transition-transform duration-300"></i>
-                    </button>
-                    
-                    <!-- Dropdown Menu -->
-                    <div id="user-dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-56 rounded-xl shadow-card opacity-0 invisible scale-95 transition-all duration-300 z-50">
-                        <div class="p-4 border-b theme-border">
-                            <p class="font-semibold theme-text-primary">{{ user.first_name|default:user.username }}</p>
-                            <p class="text-sm theme-text-muted">{{ user.email }}</p>
-                        </div>
-                        
-                        <div class="py-2">
-                            <a href="{% url 'profile' %}" 
-                               class="flex items-center space-x-3 px-4 py-3 theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary transition-all duration-300">
-                                <i class="bi bi-person-gear text-lg"></i>
-                                <span>{% trans "Profile" %}</span>
-                            </a>
-                            
-                            <a href="#" 
-                               class="flex items-center space-x-3 px-4 py-3 theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary transition-all duration-300">
-                                <i class="bi bi-gear text-lg"></i>
-                                <span>{% trans "Settings" %}</span>
-                            </a>
-                            
-                            <div class="border-t theme-border my-2"></div>
-                            
-                            <a href="{% url 'logout' %}" 
-                               class="flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300">
-                                <i class="bi bi-box-arrow-right text-lg"></i>
-                                <span>{% trans "Logout" %}</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="flex items-center space-x-2">
-                    <a href="{% url 'login' %}" 
-                       class="px-4 py-2 theme-text-primary hover:theme-bg-secondary rounded-lg transition-all duration-300">
-                        {% trans "Login" %}
-                    </a>
-                    <a href="{% url 'register' %}" 
-                       class="btn-primary px-4 py-2 text-white rounded-lg font-medium">
-                        {% trans "Register" %}
-                    </a>
-                </div>
-                {% endif %}
-
-                <!-- Cart -->
-                <a href="{% url 'view_cart' %}" 
-                   class="relative p-2 rounded-lg theme-bg-accent text-white hover:opacity-90 transition-all duration-300 transform hover:scale-110"
-                   aria-label="{% trans 'View cart' %}">
-                    <i class="bi bi-cart text-lg"></i>
-                    {% if cart_item_count > 0 %}
-                    <span class="cart-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+            </li>
+            {% endif %}
+        
+            {% if current_tab == 'shop' %}
+            <li class="relative">
+                <a href="{% url 'shop' %}" class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-500{% endif %}">
+                    <i class="bi bi-bag-fill"></i> {% trans "Dukani" %}
+                </a>
+                <!-- Line under the active link -->
+                <span class="absolute left-0 right-0 h-1 {% if theme == 'dark' %}bg-blue-400{% else %}bg-blue-400{% endif %} -bottom-3"></span>
+            </li>
+            {% else %}
+            <li>
+                <a href="{% url 'shop' %}" class="{% if theme == 'dark' %}hover:text-blue-400 text-blue-300{% else %}hover:text-blue-500 text-blue-900{% endif %} transition duration-300">
+                    <i class="bi bi-bag"></i> {% trans "Dukani" %}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    
+        <!-- Right-Side Links (Only Cart on Mobile) -->
+        <ul class="flex items-center space-x-4 md:space-x-6">
+            <li class="relative">
+                <a href="{% url 'view_cart' %}" class="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-500 hover:text-white transition duration-300" aria-label="{% trans 'View cart' %}">
+                    {% trans "Kitenga" %}
+                    <i class="bi bi-cart text-xl"></i>
+                    <span id="cart-item-count" class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-blue-900 text-white text-xs rounded-full px-2">
                         {{ cart_item_count }}
                     </span>
-                    {% endif %}
                 </a>
-            </div>
-        </div>
+            </li>
+        </ul>
     </nav>
-
-    <!-- Mobile Navigation -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 theme-bg-primary border-t theme-border z-40">
-        <div class="flex items-center justify-around py-2">
-            <a href="{% url 'home' %}" 
-               class="flex flex-col items-center py-2 px-4 {% if current_tab == 'home' %}theme-accent{% else %}theme-text-muted{% endif %}">
-                <i class="bi bi-house{% if current_tab == 'home' %}-fill{% endif %} text-lg"></i>
-                <span class="text-xs mt-1">{% trans "Home" %}</span>
-            </a>
-            
-            <a href="{% url 'shop' %}" 
-               class="flex flex-col items-center py-2 px-4 {% if current_tab == 'shop' %}theme-accent{% else %}theme-text-muted{% endif %}">
-                <i class="bi bi-bag{% if current_tab == 'shop' %}-fill{% endif %} text-lg"></i>
-                <span class="text-xs mt-1">{% trans "Shop" %}</span>
-            </a>
-            
-            <button id="mobile-menu-toggle" 
-                    class="flex flex-col items-center py-2 px-4 theme-text-muted">
-                <i class="bi bi-list text-lg"></i>
-                <span class="text-xs mt-1">{% trans "Menu" %}</span>
-            </button>
-        </div>
-    </div>
-
+    
     <!-- Sidebar -->
-    <aside id="sidebar" 
-           class="sidebar fixed inset-y-0 left-0 w-64 md:w-72 transform -translate-x-full transition-transform duration-300 ease-in-out z-40 pt-20">
-        <div class="h-full overflow-y-auto p-6">
-            <div class="mb-6">
-                <h2 class="text-lg font-bold theme-text-primary mb-4">{% trans "Categories" %}</h2>
-            </div>
-            
-            <nav class="space-y-2">
-                {% for category in categories %}
-                <div class="category-item">
-                    <button 
-                        onclick="toggleSidebarMenu('dropdown-{{ forloop.counter }}', 'icon-{{ forloop.counter }}')"
-                        class="w-full flex items-center justify-between p-3 rounded-lg theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary transition-all duration-300"
-                    >
-                        <div class="flex items-center space-x-3">
-                            <i class="bi bi-folder text-lg"></i>
-                            <span class="font-medium">{{ category.name }}</span>
-                        </div>
-                        {% if category.subcategories.exists %}
-                        <i class="bi bi-chevron-down transition-transform duration-300" 
-                           id="icon-{{ forloop.counter }}"></i>
-                        {% endif %}
-                    </button>
-                    
-                    {% if category.subcategories.exists %}
-                    <div id="dropdown-{{ forloop.counter }}" class="hidden ml-6 mt-2 space-y-1">
-                        {% for subcategory in category.subcategories.all %}
-                        <a href="{% url 'products_by_subcategory' subcategory.name %}" 
-                           class="flex items-center space-x-3 p-2 rounded-lg theme-text-muted hover:theme-text-primary hover:theme-bg-secondary transition-all duration-300">
-                            <i class="bi bi-dot text-lg"></i>
-                            <span>{{ subcategory.name }}</span>
-                        </a>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </nav>
-        </div>
-    </aside>
-
-    <!-- Overlay -->
-    <div id="sidebar-overlay" 
-         class="fixed inset-0 bg-black bg-opacity-50 z-30 opacity-0 invisible transition-all duration-300"></div>
-
-    <!-- Main Content -->
-    <main class="flex-1 pt-20 pb-16 md:pb-8">
-        {% if messages %}
-        <div id="alert-container" class="fixed top-20 left-4 right-4 z-50">
-            {% for message in messages %}
-            <div class="alert mb-4 p-4 rounded-lg shadow-card animate-slideDown 
-                        {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800{% endif %}
-                        {% if message.tags == 'error' %}bg-red-100 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800{% endif %}
-                        {% if message.tags == 'warning' %}bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800{% endif %}
-                        {% if message.tags == 'info' %}bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800{% endif %}">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                        {% if message.tags == 'success' %}<i class="bi bi-check-circle"></i>{% endif %}
-                        {% if message.tags == 'error' %}<i class="bi bi-exclamation-circle"></i>{% endif %}
-                        {% if message.tags == 'warning' %}<i class="bi bi-exclamation-triangle"></i>{% endif %}
-                        {% if message.tags == 'info' %}<i class="bi bi-info-circle"></i>{% endif %}
-                        <span>{{ message }}</span>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" 
-                            class="text-current opacity-50 hover:opacity-100 transition-opacity">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-            </div>
-            {% endfor %}
+    <div id="sidebar" class="fixed inset-y-0 left-0 mt-16 pt-6 pb-12 w-full md:w-64 {% if theme == 'dark' %}bg-gray-800 text-blue-300{% else %}bg-white text-blue-900{% endif %} z-40 overflow-y-auto transform -translate-x-full transition-transform duration-300 h-screen shadow-lg">
+        <!-- Welcome Message -->
+        {% if user.is_authenticated %}
+        <div class="p-4">
+            <span class="{% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %} text-sm">{% trans "Hello" %}, {{ user.first_name|default:user.username }}</span>
         </div>
         {% endif %}
-
-        <div class="container mx-auto px-4 max-w-7xl">
-            {% block main_block %}
-            <!-- Sample Content -->
-            <div class="py-12">
-                <div class="text-center mb-12">
-                    <h1 class="text-4xl md:text-6xl font-bold text-gradient mb-4">
-                        {% trans "Welcome to Hazina ya Vitabu" %}
-                    </h1>
-                    <p class="text-xl theme-text-secondary max-w-2xl mx-auto">
-                        {% trans "Discover your next favorite book in our digital treasury" %}
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Sample Cards -->
-                    {% for i in "123" %}
-                    <div class="shadow-card theme-bg-secondary rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="w-12 h-12 theme-bg-accent rounded-lg flex items-center justify-center mb-4">
-                            <i class="bi bi-book text-white text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-bold theme-text-primary mb-2">Sample Book {{ i }}</h3>
-                        <p class="theme-text-secondary mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <button class="btn-primary px-4 py-2 text-white rounded-lg font-medium">
-                            {% trans "Read More" %}
-                        </button>
-                    </div>
+        
+        <!-- Categories -->
+        <ul class="space-y-6 mb-3 pt-6 pl-6 pb-6">
+            {% for category in categories %}
+            <li>
+                <button
+                    onclick="toggleSidebarMenu('dropdown-{{ forloop.counter }}', 'icon-{{ forloop.counter }}')"
+                    class="flex justify-between items-center w-full text-left {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-500{% endif %} focus:outline-none"
+                >
+                    <span><i class="bi bi-three-dots-vertical"></i> {{ category.name }}</span>
+                    {% if category.subcategories.exists %}
+                    <i
+                        class="bi bi-chevron-down transition-transform mr-3"
+                        id="icon-{{ forloop.counter }}"
+                    ></i>
+                    {% endif %}
+                </button>
+                {% if category.subcategories.exists %}
+                <ul id="dropdown-{{ forloop.counter }}" class="hidden pl-4">
+                    {% for subcategory in category.subcategories.all %}
+                    <li class="{% if theme == 'dark' %}bg-gray-700{% else %}bg-blue-100{% endif %} p-2 rounded mr-3 mt-2">
+                        <a href="{% url 'products_by_subcategory' subcategory.name %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">
+                            <i class="bi bi-dot"></i> {{ subcategory.name }}
+                        </a>
+                    </li>
                     {% endfor %}
-                </div>
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Settings and User Options -->
+        <div class="mt-auto p-4">
+            <h2 class="text-lg font-semibold mb-2">{% trans "Settings" %}</h2>
+            <div class="flex space-x-2 mb-4">
+                <a href="{% url 'set_language' 'en' %}" class="{% if LANGUAGE_CODE == 'en' %}{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-bold{% else %}{% if theme == 'dark' %}text-gray-400 hover:text-blue-400{% else %}text-gray-600 hover:text-blue-600{% endif %}{% endif %} text-sm transition duration-300">EN</a>
+                <span class="{% if theme == 'dark' %}text-gray-500{% else %}text-gray-400{% endif %}">|</span>
+                <a href="{% url 'set_language' 'sw' %}" class="{% if LANGUAGE_CODE == 'sw' %}{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-bold{% else %}{% if theme == 'dark' %}text-gray-400 hover:text-blue-400{% else %}text-gray-600 hover:text-blue-600{% endif %}{% endif %} text-sm transition duration-300">SW</a>
             </div>
-            {% endblock %}
+            <button onclick="toggleTheme()" class="p-2 rounded-full {% if theme == 'dark' %}bg-gray-700 text-yellow-400 hover:bg-gray-600{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} transition duration-300" title="{% trans 'Toggle Theme' %}">
+                {% if theme == 'dark' %}
+                    <i class="bi bi-sun text-lg"></i>
+                {% else %}
+                    <i class="bi bi-moon text-lg"></i>
+                {% endif %}
+            </button>
         </div>
-    </main>
+        
+        <!-- User Menu -->
+        {% if user.is_authenticated %}
+        <div class="p-4">
+            <h2 class="text-lg font-semibold mb-2">{% trans "Account" %}</h2>
+            <ul class="space-y-4">
+                <li>
+                    <a href="{% url 'profile' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">
+                        <i class="bi bi-person-gear mr-2"></i>{% trans "Profile" %}
+                    </a>
+                </li>
+                {% if user.userprofile.role == 'buyer' %}
+                <li>
+                    <a href="{% url 'buyer_dashboard' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">
+                        <i class="bi bi-speedometer2 mr-2"></i>{% trans "My Dashboard" %}
+                    </a>
+                </li>
+                {% elif user.userprofile.role == 'seller' %}
+                <li>
+                    <a href="{% url 'seller_dashboard' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">
+                        <i class="bi bi-speedometer2 mr-2"></i>{% trans "Seller Dashboard" %}
+                    </a>
+                </li>
+                {% elif user.userprofile.role == 'superuser' or user.is_superuser %}
+                <li>
+                    <a href="{% url 'superuser_dashboard' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">
+                        <i class="bi bi-speedometer2 mr-2"></i>{% trans "Admin Dashboard" %}
+                    </a>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'logout' %}" class="block {% if theme == 'dark' %}text-red-400 hover:bg-gray-700{% else %}text-red-600 hover:bg-gray-100{% endif %} transition duration-300">
+                        <i class="bi bi-box-arrow-right mr-2"></i>{% trans "Logout" %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="p-4">
+            <h2 class="text-lg font-semibold mb-2">{% trans "Account" %}</h2>
+            <ul class="space-y-4">
+                <li>
+                    <a href="{% url 'login' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">{% trans "Login" %}</a>
+                </li>
+                <li>
+                    <a href="{% url 'register' %}" class="block {% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-600{% endif %}">{% trans "Register" %}</a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
 
-    <!-- Footer -->
-    <footer class="theme-bg-secondary border-t theme-border py-8">
-        <div class="container mx-auto px-4 max-w-7xl">
-            <div class="text-center">
-                <p class="theme-text-muted mb-2">
-                    &copy; 2025 {% trans "Hazina ya Vitabu" %}. {% trans "All rights reserved" %}.
-                </p>
-                <p class="text-2xl font-bold theme-accent">fmkcoders</p>
+    {% if messages %}
+        <div id="alert-container" class="fixed top-0 left-0 right-0 z-50 p-2 transition-transform transform -translate-y-full bg-blue-100 text-blue-800">
+            <div>
+                {% for message in messages %}
+                    {% if forloop.last %}
+                        <div class="p-2 rounded text-center bg-blue-200 text-blue-800">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const alertContainer = document.getElementById("alert-container");
+
+                // Slide down animation
+                setTimeout(() => {
+                    alertContainer.classList.remove("-translate-y-full");
+                }, 100); // Small delay for smooth effect
+
+                // Slide up and remove after 5 seconds
+                setTimeout(() => {
+                    alertContainer.classList.add("-translate-y-full");
+                }, 4000); // Alert will stay visible for 5 seconds
+            });
+        </script>
+    {% endif %}
+
+    <!-- Mobile Navigation -->
+    <div class="flex mt-10 {% if theme == 'dark' %}bg-gray-800 text-blue-300{% else %}bg-white text-blue-900{% endif %} justify-center items-center shadow-lg">
+        <ul class="md:hidden pt-3 flex my-2 space-x-3">
+            {% if current_tab == 'home' %}
+            <li class="pr-3 border-r-2 border-b-2 pb-1 {% if theme == 'dark' %}border-blue-400{% else %}border-blue-300{% endif %}">
+                <a href="{% url 'home' %}" class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-500{% endif %}">
+                    <i class="bi bi-house-fill"> </i>{% trans "Nyumbani" %}
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{% url 'home' %}" class="{% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-500{% endif %} transition duration-300">
+                    <i class="bi bi-house"> </i>{% trans "Nyumbani" %}
+                </a>
+            </li>
+            {% endif %}
+
+            {% if current_tab == 'shop' %}
+            <li class="pl-3 border-l-2 border-b-2 pb-1 {% if theme == 'dark' %}border-blue-400{% else %}border-blue-300{% endif %}">
+                <a href="{% url 'shop' %}" class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-500{% endif %}">
+                    <i class="bi bi-bag-fill"> </i>{% trans "Dukani" %}
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{% url 'shop' %}" class="{% if theme == 'dark' %}hover:text-blue-400{% else %}hover:text-blue-500{% endif %} transition duration-300">
+                    <i class="bi bi-bag"> </i>{% trans "Dukani" %}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <!-- Main Content -->
+    {% block main_block %}
+    {% endblock %}
+    
+    <!-- Footer Section -->
+    <footer class="{% if theme == 'dark' %}bg-gray-900 border-t border-gray-700{% else %}bg-blue-900{% endif %} text-white py-8">
+      <div class="container mx-auto px-4">
+          <!-- Copyright Section -->
+          <div class="text-center mt-4">
+              <p>&copy; 2025 {% trans "Hazina ya Vitabu" %}. {% trans "Haki zote zimehifadhiwa" %}.</p>
+          </div>
+          <div class="text-center mt-4">
+            <p style="font-family: 'Arial', sans-serif; font-size: 24px; color: white; font-weight: bold;">fmkcoders</p>
+          </div>
+      </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
-        // Theme toggle functionality
+        // Theme toggle function
         function toggleTheme() {
-            const body = document.body;
-            const isDark = body.classList.contains('dark-theme');
-            
-            // Add loading state
-            const themeButton = document.querySelector('[onclick="toggleTheme()"]');
-            themeButton.classList.add('loading');
-            
             fetch('{% url "toggle_theme" %}', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json'
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Toggle theme classes
-                    body.classList.toggle('dark-theme');
-                    body.classList.toggle('light-theme');
-                    
-                    // Update theme icon
-                    const icon = themeButton.querySelector('i');
-                    if (isDark) {
-                        icon.className = 'bi bi-moon text-lg';
-                    } else {
-                        icon.className = 'bi bi-sun text-lg';
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Theme toggle failed:', error);
-            })
-            .finally(() => {
-                themeButton.classList.remove('loading');
-            });
+            }).then(() => location.reload());
         }
+    </script>
 
-        // Sidebar functionality
+    <script>
+        // Sidebar toggle functionality
         const sidebarToggle = document.getElementById('toggle-sidebar');
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('opacity-0', 'invisible');
-            overlay.classList.add('opacity-100', 'visible');
-            document.body.style.overflow = 'hidden';
-        }
+        sidebarToggle.addEventListener('click', () => {
+            const isHidden = sidebar.classList.contains('-translate-x-full');
 
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.remove('opacity-100', 'visible');
-            overlay.classList.add('opacity-0', 'invisible');
-            document.body.style.overflow = '';
-        }
-
-        sidebarToggle?.addEventListener('click', openSidebar);
-        mobileMenuToggle?.addEventListener('click', openSidebar);
-        overlay?.addEventListener('click', closeSidebar);
-
-        // Close sidebar on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeSidebar();
-            }
+            sidebar.classList.toggle('-translate-x-full', !isHidden);
+            document.body.style.overflowY = isHidden ? 'hidden' : 'auto'; // Manage body scrolling
         });
 
-        // Sidebar dropdown functionality
+        // Sidebar dropdown toggle functionality
         function toggleSidebarMenu(dropdownId, iconId) {
             const dropdown = document.getElementById(dropdownId);
             const icon = document.getElementById(iconId);
-            
-            if (!dropdown || !icon) return;
 
-            // Close other dropdowns
-            document.querySelectorAll('[id^="dropdown-"]').forEach(item => {
-                if (item !== dropdown && !item.classList.contains('hidden')) {
-                    item.classList.add('hidden');
-                    const otherIcon = document.getElementById(item.id.replace('dropdown-', 'icon-'));
-                    if (otherIcon) {
-                        otherIcon.style.transform = 'rotate(0deg)';
-                    }
+            if (!dropdown) return;
+
+            // Close all other dropdowns
+            const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
+            const allIcons = document.querySelectorAll('[id^="icon-"]');
+
+            allDropdowns.forEach((dropdownItem) => {
+                if (dropdownItem !== dropdown) {
+                    dropdownItem.classList.add('hidden');
                 }
             });
 
-            // Toggle current dropdown
+            allIcons.forEach((iconItem) => {
+                if (iconItem !== icon) {
+                    iconItem.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle the selected dropdown
             dropdown.classList.toggle('hidden');
-            icon.style.transform = dropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
-
-        // Auto-hide alerts
-        document.addEventListener('DOMContentLoaded', () => {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.animation = 'slideUp 0.3s ease-in forwards';
-                    setTimeout(() => alert.remove(), 300);
-                }, 5000);
-            });
-        });
-
-        // User menu dropdown functionality
-        function toggleUserMenu() {
-            const dropdown = document.getElementById('user-dropdown-menu');
-            const chevron = document.getElementById('user-menu-chevron');
-            
-            if (dropdown && chevron) {
-                const isOpen = dropdown.classList.contains('show');
-                
-                if (isOpen) {
-                    dropdown.classList.remove('show');
-                    chevron.style.transform = 'rotate(0deg)';
-                } else {
-                    dropdown.classList.add('show');
-                    chevron.style.transform = 'rotate(180deg)';
-                }
+            if (icon) {
+                icon.style.transform = dropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
             }
         }
 
-        // Close user dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userDropdown = document.getElementById('user-dropdown-menu');
-            const chevron = document.getElementById('user-menu-chevron');
-            
-            if (userMenuButton && userDropdown && chevron) {
-                if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
-                    userDropdown.classList.remove('show');
-                    chevron.style.transform = 'rotate(0deg)';
-                }
-            }
-        });
+        // Close all dropdowns when clicking outside
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
 
-        // Close dropdown on escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const userDropdown = document.getElementById('user-dropdown-menu');
-                const chevron = document.getElementById('user-menu-chevron');
-                
-                if (userDropdown && chevron) {
-                    userDropdown.classList.remove('show');
-                    chevron.style.transform = 'rotate(0deg)';
-                }
-            }
-        });
+            // Ignore clicks inside the sidebar
+            if (sidebar.contains(event.target)) return;
 
-        // Cart animation
-        function animateCart() {
-            const cartIcon = document.querySelector('[href*="view_cart"]');
-            if (cartIcon) {
-                cartIcon.classList.add('cart-shine');
-                setTimeout(() => {
-                    cartIcon.classList.remove('cart-shine');
-                }, 800);
+            const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
+            const allIcons = document.querySelectorAll('[id^="icon-"]');
+
+            allDropdowns.forEach((dropdown) => {
+                dropdown.classList.add('hidden');
+            });
+
+            allIcons.forEach((icon) => {
+                icon.style.transform = 'rotate(0deg)';
+            });
+        });
+    </script>
+    
+    <script>
+        // Carousel functionality
+        const slides = document.getElementById('carousel-slides');
+        const prev = document.getElementById('prev');
+        const next = document.getElementById('next');
+        const totalSlides = slides.children.length;
+    
+        let currentIndex = 0;
+    
+        function showSlide(index) {
+            slides.style.transform = `translateX(-${index * 100}%)`;
+        }
+    
+        prev.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            showSlide(currentIndex);
+        });
+    
+        next.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            showSlide(currentIndex);
+        });
+    
+        // Auto-slide (optional)
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            showSlide(currentIndex);
+        }, 5000);
+    
+        // Dropdown toggle functionality
+        function toggleDropdown(dropdownId, buttonId) {
+            const dropdown = document.getElementById(dropdownId);
+            const button = document.getElementById(buttonId);
+            const icon = button.querySelector('.dropdown-icon');
+    
+            dropdown.classList.toggle('hidden');
+            if (!dropdown.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(180deg)'; // Rotate the icon when dropdown is shown
+            } else {
+                icon.style.transform = 'rotate(0deg)'; // Reset rotation when dropdown is hidden
             }
         }
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+    
+        // Close all dropdowns if clicked outside
+        document.addEventListener('click', (event) => {
+            const dropdowns = document.querySelectorAll('[id^="dropdownMenu"]');
+            dropdowns.forEach((dropdown) => {
+                const button = document.querySelector(`[data-dropdown-button="${dropdown.id}"]`);
+                const icon = button.querySelector('.dropdown-icon');
+    
+                if (dropdown && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
                 }
             });
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'fadeIn 0.6s ease-out forwards';
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.shadow-card').forEach(card => {
-            observer.observe(card);
         });
     </script>
 </body>

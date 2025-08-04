@@ -101,20 +101,28 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
-                return redirect('home')
                 # Role-based redirection
                 try:
                     user_profile = user.userprofile
                     if user_profile.role == 'seller':
+                        messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
                         return redirect('seller_dashboard')
-                    elif user_profile.role == 'superuser' or user.is_superuser:
+                    elif user_profile.role == 'superuser':
+                        messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
                         return redirect('superuser_dashboard')
                     else:
-                        return redirect('buyer_dashboard')
+                        messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
+                        return redirect('home')  # Buyers go to home page
                 except UserProfile.DoesNotExist:
                     # If no profile exists, create one with buyer role
                     UserProfile.objects.create(user=user, phone_number='', role='buyer')
+                    messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
+                    return redirect('home')
+                
+                # Check if user is Django superuser
+                if user.is_superuser:
+                    messages.success(request, _('Welcome back, %(username)s!') % {'username': username})
+                    return redirect('superuser_dashboard')
     else:
         form = AuthenticationForm()
     
@@ -169,11 +177,20 @@ def profile_view(request):
 
 
 @login_required
-@role_required(['buyer'])
 def buyer_dashboard(request):
     """Buyer dashboard view"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is buyer
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'buyer':
+            messages.error(request, _('Access denied. This dashboard is for buyers only.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        # Create buyer profile if doesn't exist
+        UserProfile.objects.create(user=request.user, phone_number='', role='buyer')
     
     # Get buyer's orders
     orders = Order.objects.filter(customer=request.user).order_by('-created_at')[:10]
@@ -193,11 +210,20 @@ def buyer_dashboard(request):
 
 
 @login_required
-@role_required(['seller'])
 def seller_dashboard(request):
     """Seller dashboard view"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Access denied. This dashboard is for sellers only.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
     
     # Get pending orders
     pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
@@ -222,11 +248,21 @@ def seller_dashboard(request):
 
 
 @login_required
-@role_required(['superuser'])
 def superuser_dashboard(request):
     """Superuser dashboard view"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is superuser
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'superuser' and not request.user.is_superuser:
+            messages.error(request, _('Access denied. This dashboard is for administrators only.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, _('Access denied. This dashboard is for administrators only.'))
+            return redirect('home')
     
     # Get statistics
     total_users = User.objects.count()
@@ -263,9 +299,18 @@ def superuser_dashboard(request):
 
 
 @login_required
-@role_required(['seller'])
 def accept_order(request, order_id):
     """Accept an order by seller"""
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Only sellers can accept orders.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
+    
     order = get_object_or_404(Order, id=order_id, status='pending')
     order.accept_order(request.user)
     messages.success(request, _('Order accepted successfully!'))
@@ -273,9 +318,18 @@ def accept_order(request, order_id):
 
 
 @login_required
-@role_required(['seller'])
 def complete_order(request, order_id):
     """Complete an order by seller"""
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Only sellers can complete orders.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
+    
     order = get_object_or_404(Order, id=order_id, seller=request.user, status='accepted')
     order.complete_order()
     messages.success(request, _('Order completed successfully!'))
@@ -283,11 +337,20 @@ def complete_order(request, order_id):
 
 
 @login_required
-@role_required(['seller'])
 def daily_report_view(request):
     """Daily report form for sellers"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Only sellers can fill daily reports.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
     
     today = timezone.now().date()
     report, created = DailyReport.objects.get_or_create(
@@ -323,16 +386,23 @@ def daily_report_view(request):
     }
     return render(request, 'users/daily_report.html', context)
 
-
 @login_required
-@role_required(['superuser'])
 def manage_users(request):
-    """Manage users view for superuser"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
     
+    # Check if user is superuser
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'superuser' and not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can manage users.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can manage users.'))
+            return redirect('home')
+    
     if request.method == 'POST':
-        # Create new user
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -354,17 +424,23 @@ def manage_users(request):
                 last_name=last_name
             )
             
-            UserProfile.objects.create(
+            if role == 'superuser':
+                user.is_superuser = True
+                user.is_staff = True
+                user.save()
+            
+            UserProfile.objects.update_or_create(
                 user=user,
-                phone_number=phone_number,
-                role=role,
-                created_by=request.user
+                defaults={
+                    'phone_number': phone_number,
+                    'role': role,
+                    'created_by': request.user
+                }
             )
             
             messages.success(request, _('User created successfully!'))
             return redirect('manage_users')
     
-    # Get all users with profiles
     users = User.objects.select_related('userprofile').order_by('-date_joined')
     
     context = {
@@ -376,13 +452,22 @@ def manage_users(request):
     }
     return render(request, 'users/manage_users.html', context)
 
-
 @login_required
-@role_required(['superuser'])
 def view_reports(request):
     """View all reports for superuser"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is superuser
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'superuser' and not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can view reports.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can view reports.'))
+            return redirect('home')
     
     # Get filter parameters
     seller_id = request.GET.get('seller')

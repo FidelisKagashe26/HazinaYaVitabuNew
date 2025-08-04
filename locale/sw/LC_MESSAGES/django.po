@@ -242,3 +242,201 @@ msgstr "Msimbo wa Kurudisha Nenosiri - Hazina ya Vitabu"
 
 msgid "Your password reset code is: %(code)s\n\nThis code will expire in 1 hour."
 msgstr "Msimbo wako wa kurudisha nenosiri ni: %(code)s\n\nMsimbo huu utaisha baada ya saa 1."
+
+msgid "My Dashboard"
+msgstr "Dashibodi Yangu"
+
+msgid "Seller Dashboard"
+msgstr "Dashibodi ya Muuzaji"
+
+msgid "Admin Dashboard"
+msgstr "Dashibodi ya Msimamizi"
+
+msgid "Access denied. This dashboard is for buyers only."
+msgstr "Hauruhusiwi. Dashibodi hii ni ya wanunuzi tu."
+
+msgid "Access denied. This dashboard is for sellers only."
+msgstr "Hauruhusiwi. Dashibodi hii ni ya wauzaji tu."
+
+msgid "Access denied. This dashboard is for administrators only."
+msgstr "Hauruhusiwi. Dashibodi hii ni ya wasimamizi tu."
+
+msgid "User profile not found."
+msgstr "Wasifu wa mtumiaji haujapatikana."
+
+msgid "Only sellers can accept orders."
+msgstr "Wauzaji tu ndio wanaweza kukubali maagizo."
+
+msgid "Only sellers can complete orders."
+msgstr "Wauzaji tu ndio wanaweza kukamilisha maagizo."
+
+msgid "Only sellers can fill daily reports."
+msgstr "Wauzaji tu ndio wanaweza kujaza ripoti za kila siku."
+
+msgid "Access denied. Only administrators can manage users."
+msgstr "Hauruhusiwi. Wasimamizi tu ndio wanaweza kusimamia watumiaji."
+
+msgid "Access denied. Only administrators can view reports."
+msgstr "Hauruhusiwi. Wasimamizi tu ndio wanaweza kuona ripoti."
+
+msgid "Order accepted successfully!"
+msgstr "Agizo limekubaliwa kwa ufanisi!"
+
+msgid "Order completed successfully!"
+msgstr "Agizo limekamilishwa kwa ufanisi!"
+
+msgid "Daily report saved successfully!"
+msgstr "Ripoti ya kila siku imehifadhiwa kwa ufanisi!"
+
+msgid "Username already exists."
+msgstr "Jina la mtumiaji tayari lipo."
+
+msgid "Email already exists."
+msgstr "Barua pepe tayari ipo."
+
+msgid "User created successfully!"
+msgstr "Mtumiaji ameundwa kwa ufanisi!"
+
+msgid "Buyer Dashboard"
+msgstr "Dashibodi ya Mnunuzi"
+
+msgid "Welcome back"
+msgstr "Karibu tena"
+
+msgid "Recent Orders"
+msgstr "Maagizo ya Hivi Karibuni"
+
+msgid "Order"
+msgstr "Agizo"
+
+msgid "Total"
+msgstr "Jumla"
+
+msgid "Seller"
+msgstr "Muuzaji"
+
+msgid "No orders yet."
+msgstr "Hakuna maagizo bado."
+
+msgid "Recent Products"
+msgstr "Bidhaa za Hivi Karibuni"
+
+msgid "View Details"
+msgstr "Angalia Maelezo"
+
+msgid "Browse Products"
+msgstr "Vinjari Bidhaa"
+
+msgid "Discover new books"
+msgstr "Gundua vitabu vipya"
+
+msgid "View Cart"
+msgstr "Angalia Kitenga"
+
+msgid "Check your items"
+msgstr "Angalia vitu vyako"
+
+msgid "Profile Settings"
+msgstr "Mipangilio ya Wasifu"
+
+msgid "Update your info"
+msgstr "Sasisha taarifa zako"
+
+msgid "Superuser Dashboard"
+msgstr "Dashibodi ya Msimamizi Mkuu"
+
+msgid "System Overview and Management"
+msgstr "Muhtasari wa Mfumo na Usimamizi"
+
+msgid "Total Users"
+msgstr "Watumiaji Wote"
+
+msgid "Sellers"
+msgstr "Wauzaji"
+
+msgid "Buyers"
+msgstr "Wanunuzi"
+
+msgid "Total Orders"
+msgstr "Maagizo Yote"
+
+msgid "Pending Orders"
+msgstr "Maagizo Yanayosubiri"
+
+msgid "Add/Edit Users"
+msgstr "Ongeza/Hariri Watumiaji"
+
+msgid "Daily/Monthly Reports"
+msgstr "Ripoti za Kila Siku/Mwezi"
+
+msgid "System Settings"
+msgstr "Mipangilio ya Mfumo"
+
+msgid "View Products"
+msgstr "Angalia Bidhaa"
+
+msgid "No reports submitted today."
+msgstr "Hakuna ripoti zilizotumwa leo."
+
+msgid "Recent Users"
+msgstr "Watumiaji wa Hivi Karibuni"
+
+msgid "Username"
+msgstr "Jina la Mtumiaji"
+
+msgid "Role"
+msgstr "Jukumu"
+
+msgid "Joined"
+msgstr "Alijiunga"
+
+msgid "No Role"
+msgstr "Hakuna Jukumu"
+
+msgid "Active"
+msgstr "Hai"
+
+msgid "Inactive"
+msgstr "Haikai"
+
+msgid "Pending Orders"
+msgstr "Maagizo Yanayosubiri"
+
+msgid "Accept Order"
+msgstr "Kubali Agizo"
+
+msgid "My Orders"
+msgstr "Maagizo Yangu"
+
+msgid "Mark Complete"
+msgstr "Weka Alama ya Kukamilika"
+
+msgid "No orders assigned to you yet."
+msgstr "Hakuna maagizo yaliyokupewa bado."
+
+msgid "Today's Report"
+msgstr "Ripoti ya Leo"
+
+msgid "Update Report"
+msgstr "Sasisha Ripoti"
+
+msgid "Fill Report"
+msgstr "Jaza Ripoti"
+
+msgid "Books Sold"
+msgstr "Vitabu Vilivyouzwa"
+
+msgid "Books Given Free"
+msgstr "Vitabu Vilivyotolewa Bure"
+
+msgid "Houses Visited"
+msgstr "Nyumba Zilizotembeleewa"
+
+msgid "Teachings Given"
+msgstr "Mafundisho Yaliyotolewa"
+
+msgid "Working Hours"
+msgstr "Masaa ya Kufanya Kazi"
+
+msgid "No report filled for today. Please fill your daily report."
+msgstr "Hakuna ripoti iliyojazwa leo. Tafadhali jaza ripoti yako ya kila siku."
