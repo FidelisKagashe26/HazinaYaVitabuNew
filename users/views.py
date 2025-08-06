@@ -3,11 +3,12 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.core.cache import cache
 from django.contrib.auth.views import LoginView
-from users.models import UserProfile, PasswordResetCode, DailyReport, MonthlyReport
+from users.models import UserProfile, PasswordResetCode, DailyReport, MonthlyReport, AnonymousOrder
 from users.forms import RegistrationForm, UserForm, UserProfileForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import activate, get_language
@@ -225,8 +226,9 @@ def seller_dashboard(request):
         messages.error(request, _('User profile not found.'))
         return redirect('home')
     
-    # Get pending orders
+    # Get pending orders (both regular and anonymous)
     pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
+    anonymous_orders = AnonymousOrder.objects.filter(is_processed=False).order_by('-created_at')
     
     # Get seller's accepted orders
     my_orders = Order.objects.filter(seller=request.user).order_by('-created_at')[:10]
@@ -239,6 +241,7 @@ def seller_dashboard(request):
         'categories': categories,
         'cart_item_count': cart_item_count,
         'pending_orders': pending_orders,
+        'anonymous_orders': anonymous_orders,
         'my_orders': my_orders,
         'today_report': today_report,
         'current_tab': 'dashboard',
@@ -269,10 +272,13 @@ def superuser_dashboard(request):
     total_sellers = UserProfile.objects.filter(role='seller').count()
     total_buyers = UserProfile.objects.filter(role='buyer').count()
     total_orders = Order.objects.count()
+    total_anonymous_orders = AnonymousOrder.objects.count()
     pending_orders = Order.objects.filter(status='pending').count()
+    pending_anonymous_orders = AnonymousOrder.objects.filter(is_processed=False).count()
     
     # Get recent orders
     recent_orders = Order.objects.order_by('-created_at')[:10]
+    recent_anonymous_orders = AnonymousOrder.objects.order_by('-created_at')[:5]
     
     # Get today's reports
     today = timezone.now().date()
@@ -288,14 +294,62 @@ def superuser_dashboard(request):
         'total_sellers': total_sellers,
         'total_buyers': total_buyers,
         'total_orders': total_orders,
+        'total_anonymous_orders': total_anonymous_orders,
         'pending_orders': pending_orders,
+        'pending_anonymous_orders': pending_anonymous_orders,
         'recent_orders': recent_orders,
+        'recent_anonymous_orders': recent_anonymous_orders,
         'today_reports': today_reports,
         'recent_users': recent_users,
         'current_tab': 'dashboard',
         'theme': request.session.get('theme', 'light'),
     }
     return render(request, 'users/superuser_dashboard.html', context)
+
+
+@login_required
+def accept_anonymous_order(request, order_id):
+    """Accept an anonymous order by seller"""
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Only sellers can accept orders.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
+    
+    anonymous_order = get_object_or_404(AnonymousOrder, id=order_id, is_processed=False)
+    
+    # Create a regular Order from the anonymous order
+    order = Order.objects.create(
+        customer=None,  # No customer since it's anonymous
+        customer_name=anonymous_order.customer_name,
+        customer_email=anonymous_order.customer_email,
+        customer_phone=anonymous_order.customer_phone,
+        delivery_address=anonymous_order.delivery_address,
+        total_amount=anonymous_order.total_amount,
+        status='accepted',
+        seller=request.user
+    )
+    
+    # Create OrderItems from the stored order data
+    for item_data in anonymous_order.order_data:
+        product = Product.objects.get(id=item_data['product_id'])
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=item_data['quantity'],
+            price=item_data['unit_price']
+        )
+    
+    # Mark anonymous order as processed
+    anonymous_order.is_processed = True
+    anonymous_order.save()
+    
+    messages.success(request, _('Anonymous order accepted successfully!'))
+    return redirect('seller_dashboard')
 
 
 @login_required
@@ -386,8 +440,10 @@ def daily_report_view(request):
     }
     return render(request, 'users/daily_report.html', context)
 
+
 @login_required
 def manage_users(request):
+    """Manage users view for superuser"""
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     cart_item_count = get_cart_item_count(request)
     
@@ -403,6 +459,7 @@ def manage_users(request):
             return redirect('home')
     
     if request.method == 'POST':
+        # Create new user
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -424,23 +481,23 @@ def manage_users(request):
                 last_name=last_name
             )
             
+            # Set superuser status if role is superuser
             if role == 'superuser':
                 user.is_superuser = True
                 user.is_staff = True
                 user.save()
             
-            UserProfile.objects.update_or_create(
+            UserProfile.objects.create(
                 user=user,
-                defaults={
-                    'phone_number': phone_number,
-                    'role': role,
-                    'created_by': request.user
-                }
+                phone_number=phone_number,
+                role=role,
+                created_by=request.user
             )
             
             messages.success(request, _('User created successfully!'))
             return redirect('manage_users')
     
+    # Get all users with profiles
     users = User.objects.select_related('userprofile').order_by('-date_joined')
     
     context = {
@@ -451,6 +508,7 @@ def manage_users(request):
         'theme': request.session.get('theme', 'light'),
     }
     return render(request, 'users/manage_users.html', context)
+
 
 @login_required
 def view_reports(request):
@@ -484,6 +542,11 @@ def view_reports(request):
     if date_to:
         reports = reports.filter(date__lte=date_to)
     
+    # Add pagination
+    paginator = Paginator(reports, 20)  # Show 20 reports per page
+    page_number = request.GET.get('page')
+    reports = paginator.get_page(page_number)
+    
     # Get sellers for filter dropdown
     sellers = User.objects.filter(userprofile__role='seller').order_by('username')
     
@@ -496,6 +559,78 @@ def view_reports(request):
         'theme': request.session.get('theme', 'light'),
     }
     return render(request, 'users/view_reports.html', context)
+@login_required
+def book_sales_report(request):
+    """Book sales report for sellers"""
+    from products.models import BookSaleReport, Product
+    
+    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    cart_item_count = get_cart_item_count(request)
+    
+    # Check if user is seller
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'seller':
+            messages.error(request, _('Only sellers can access book sales reports.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        messages.error(request, _('User profile not found.'))
+        return redirect('home')
+    
+    if request.method == 'POST':
+        product_id = request.POST.get('product')
+        quantity_sold_money = int(request.POST.get('quantity_sold_money', 0))
+        quantity_given_free = int(request.POST.get('quantity_given_free', 0))
+        sale_price = float(request.POST.get('sale_price', 0))
+        notes = request.POST.get('notes', '')
+        
+        product = get_object_or_404(Product, id=product_id)
+        today = timezone.now().date()
+        
+        # Create or update book sale report
+        report, created = BookSaleReport.objects.get_or_create(
+            seller=request.user,
+            product=product,
+            date_reported=today,
+            defaults={
+                'quantity_sold_money': quantity_sold_money,
+                'quantity_given_free': quantity_given_free,
+                'sale_price': sale_price,
+                'notes': notes
+            }
+        )
+        
+        if not created:
+            # Update existing report
+            report.quantity_sold_money += quantity_sold_money
+            report.quantity_given_free += quantity_given_free
+            report.sale_price = sale_price
+            report.notes = notes
+            report.save()
+        
+        messages.success(request, _('Book sale report saved successfully!'))
+        return redirect('book_sales_report')
+    
+    # Get all products for the dropdown
+    products = Product.objects.all().order_by('name')
+    
+    # Get today's reports
+    today = timezone.now().date()
+    today_reports = BookSaleReport.objects.filter(
+        seller=request.user, 
+        date_reported=today
+    ).select_related('product')
+    
+    context = {
+        'categories': categories,
+        'cart_item_count': cart_item_count,
+        'products': products,
+        'today_reports': today_reports,
+        'current_tab': 'book_sales',
+        'theme': request.session.get('theme', 'light'),
+    }
+    return render(request, 'users/book_sales_report.html', context)
+
 def password_reset_request(request):
     """Password reset request view"""
     if request.method == 'POST':
@@ -624,21 +759,20 @@ def toggle_theme(request):
 
 def get_cart_item_count(request):
     """Returns the total number of items in the user's (or anonymous user's) cart."""
+    # 1) Determine the current cart, whether user or session
     if request.user.is_authenticated:
-        # If the user is authenticated, retrieve the cart for the user
         cart = Cart.objects.filter(user=request.user, is_ordered=False).first()
-        
-        # If the cart exists, get the total item count
-        if cart:
-            return cart.items.aggregate(total=Sum('quantity'))['total'] or 0
     else:
-        # For anonymous users, retrieve cart from session
         cart_id = request.session.get('cart_id')
-        if cart_id:
-            cart = Cart.objects.filter(id=cart_id, is_ordered=False).first()
-            if cart:
-                return cart.items.aggregate(total=Sum('quantity'))['total'] or 0
-    return 0
+        cart = Cart.objects.filter(id=cart_id, is_ordered=False).first() if cart_id else None
+
+    # 2) If no cart found, count is zero
+    if not cart:
+        return 0
+
+    # 3) Sum the CartItem quantities via the 'cart_items' related name
+    aggregate = cart.cart_items.aggregate(total=Sum("quantity"))
+    return aggregate["total"] or 0
 
 
 def About(request):
@@ -754,15 +888,19 @@ def Faq(request):
 
 def Shop(request):
     """Displays the Shop page with all products and categories."""
+    # Top-level categories with their subcategories
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    products = Product.objects.order_by('-created_at')[:20]  # Optionally fetch the latest 20 products
 
+    # Fetch the latest 20 products (or adjust slicing as you prefer)
+    products = Product.objects.order_by('-created_at')[:20]
+
+    # Get the current cart item count (handles both auth and anonymous)
     cart_item_count = get_cart_item_count(request)
-    context = {
+
+    return render(request, 'users/shop.html', {
         'categories': categories,
         'products': products,
         'current_tab': 'shop',
         'cart_item_count': cart_item_count,
         'theme': request.session.get('theme', 'light'),
-    }
-    return render(request, 'users/shop.html', context)
+    })

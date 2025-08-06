@@ -127,3 +127,18 @@ class MonthlyReport(models.Model):
         )
         
         return monthly_report
+
+
+class AnonymousOrder(models.Model):
+    """Temporary model to store anonymous user orders before they register"""
+    customer_name = models.CharField(max_length=100)
+    customer_email = models.EmailField()
+    customer_phone = models.CharField(max_length=15)
+    delivery_address = models.TextField()
+    order_data = models.JSONField()  # Store cart items data
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_processed = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"Anonymous Order - {self.customer_name} ({self.customer_email})"

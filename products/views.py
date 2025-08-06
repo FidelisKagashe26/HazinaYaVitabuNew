@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Cart, CartItem, Category
+from users.models import AnonymousOrder
 from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -10,46 +11,49 @@ from django.shortcuts import render
 from django.db.models import Sum
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator
+
 
 def get_cart_item_count(request):
     """Returns the total number of items in the user's (or anonymous user's) cart."""
+    # 1) Authenticated users
     if request.user.is_authenticated:
-        # If the user is authenticated, retrieve the cart for the user (not ordered)
         cart = Cart.objects.filter(user=request.user, is_ordered=False).first()
-        
-        # If the cart exists, get the total item count
-        if cart:
-            return cart.items.aggregate(total=Sum('quantity'))['total'] or 0
     else:
-        # For anonymous users, retrieve cart from session
+        # 2) Anonymous users: id stored in session
         cart_id = request.session.get('cart_id')
-        if cart_id:
-            cart = Cart.objects.filter(id=cart_id, is_ordered=False).first()
-            if cart:
-                return cart.items.aggregate(total=Sum('quantity'))['total'] or 0
-    return 0
+        cart = Cart.objects.filter(id=cart_id, is_ordered=False).first() if cart_id else None
+
+    if not cart:
+        return 0
+
+    # 3) Sum over CartItem.quantity via the 'cart_items' related name
+    agg = cart.cart_items.aggregate(total=Sum('quantity'))
+    return agg['total'] or 0
 
 
 def Home(request):
     """Displays the homepage with top-level categories and their latest products."""
+    # Top-level categories
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    
-    # Now pass the full request object to the get_cart_item_count function
+
+    # Cart badge count
     cart_item_count = get_cart_item_count(request)
 
+    # Latest products per category
     category_products = {}
     for category in categories:
-        products = Product.objects.filter(category__in=category.subcategories.all()).order_by('-created_at')
-        category_products[category.id] = products
+        subs = category.subcategories.all()
+        qs = Product.objects.filter(category__in=subs).order_by('-created_at')
+        category_products[category] = qs
 
-    context = {
+    return render(request, 'users/landing.html', {
         'current_tab': 'home',
         'categories': categories,
         'category_products': category_products,
         'cart_item_count': cart_item_count,
         'theme': request.session.get('theme', 'light'),
-    }
-    return render(request, 'users/landing.html', context)
+    })
 
 
 def product_list(request):
@@ -146,101 +150,84 @@ from django.shortcuts import get_object_or_404
 from .models import Cart, CartItem, Product
 from django.db.models import Sum
 
-@require_POST
-def add_to_cart(request, product_id):
-    """
-    Adds a product to the cart or updates the quantity if already in the cart.
-    Handles both authenticated and anonymous users.
-    Returns the updated cart item count and total price in JSON for AJAX handling.
-    """
-    # Check if request is AJAX
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-    
-    if request.user.is_authenticated:
-        # For authenticated users, get or create cart
-        cart, created = Cart.objects.get_or_create(user=request.user, is_ordered=False)
-    else:
-        # For anonymous users, use session-based cart
-        cart_id = request.session.get('cart_id')
-        if not cart_id:
-            cart = Cart.objects.create()
-            request.session['cart_id'] = cart.id
-        else:
-            cart = get_object_or_404(Cart, id=cart_id)
-
-    # Retrieve the product
-    product = get_object_or_404(Product, id=product_id)
-
-    # Validate quantity from request
-    try:
-        quantity = int(request.POST.get('quantity', 1))
-        if quantity < 1:
-            error_msg = _("Quantity must be at least 1.")
-            if is_ajax:
-                return JsonResponse({"error": error_msg, "success": False}, status=400)
-            else:
-                messages.error(request, error_msg)
-                return redirect('product_detail', pk=product_id)
-    except (ValueError, TypeError):
-        error_msg = _("Invalid quantity specified.")
-        if is_ajax:
-            return JsonResponse({"error": error_msg, "success": False}, status=400)
-        else:
-            messages.error(request, error_msg)
-            return redirect('product_detail', pk=product_id)
-
-    # Check if the product is already in the cart
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-
-    # Validate stock availability
-    if product.stock >= cart_item.quantity + quantity:
-        if not created:
-            cart_item.quantity += quantity  # Update the quantity for existing item
-        else:
-            cart_item.quantity = quantity  # Set the quantity for a new item
-        cart_item.save()
-
-        # Get updated cart item count and total
-        cart_item_count = cart.items.aggregate(total=Sum('quantity'))['total'] or 0
-        cart_total = cart.total_price()
-
-        success_msg = _("%(product)s has been added to your cart! (Quantity: %(quantity)d)") % {
-            'product': product.name, 
-            'quantity': cart_item.quantity
-        }
-        
-        if is_ajax:
-            # Return updated information for AJAX requests
-            return JsonResponse({
-                "message": success_msg,
-                "cart_item_count": cart_item_count,
-                "cart_total": f"Tsh {cart_total:.2f}",
-                "success": True
-            })
-        else:
-            # For regular form submissions
-            messages.success(request, success_msg)
-            return redirect('product_detail', pk=product_id)
-    else:
-        error_msg = _("Only %(stock)d units of %(product)s are available.") % {
-            'stock': product.stock, 
-            'product': product.name
-        }
-        
-        if is_ajax:
-            return JsonResponse({
-                "error": error_msg,
-                "success": False
-            }, status=400)
-        else:
-            messages.error(request, error_msg)
-            return redirect('product_detail', pk=product_id)
-
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Cart, CartItem, Category
+
+@require_POST
+def add_to_cart(request, product_id):
+    """
+    Adds a product to the cart (or updates its quantity).
+    Works for both authenticated and anonymous users.
+    Returns JSON for AJAX; otherwise redirects with Django messages.
+    """
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    # ─── 1) Determine/create the cart ─────────────────────────────────────
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(
+            user=request.user,
+            session_key=None,
+            is_ordered=False
+        )
+    else:
+        if not request.session.session_key:
+            request.session.create()
+        session_key = request.session.session_key
+        cart, _ = Cart.objects.get_or_create(
+            user=None,
+            session_key=session_key,
+            is_ordered=False
+        )
+        request.session['cart_id'] = cart.id
+
+    # ─── 2) Fetch the product ────────────────────────────────────────────
+    product = get_object_or_404(Product, id=product_id)
+
+    # ─── 3) Parse & validate requested quantity ──────────────────────────
+    try:
+        added_qty = int(request.POST.get('quantity', 1))
+        if added_qty < 1:
+            raise ValueError
+    except (ValueError, TypeError):
+        error_msg = "Please enter a valid quantity (minimum 1)."
+        if is_ajax:
+            return JsonResponse({'success': False, 'error': error_msg}, status=400)
+        messages.error(request, error_msg)
+        return redirect('product_detail', pk=product_id)
+
+    # ─── 4) Get or create the CartItem ───────────────────────────────────
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+    # ─── 5) Check stock and update quantity ──────────────────────────────
+    new_quantity = (cart_item.quantity + added_qty) if not created else added_qty
+    if new_quantity > product.stock:
+        error_msg = f"Only {product.stock} unit(s) of {product.name} available."
+        if is_ajax:
+            return JsonResponse({'success': False, 'error': error_msg}, status=400)
+        messages.error(request, error_msg)
+        return redirect('product_detail', pk=product_id)
+
+    cart_item.quantity = new_quantity
+    cart_item.save()
+
+    # ─── 6) Recalculate totals ───────────────────────────────────────────
+    total_items = cart.cart_items.aggregate(total=Sum('quantity'))['total'] or 0
+    total_price = cart.total_price()
+
+    success_msg = f"{product.name} added to cart. You now have {total_items} item(s)."
+
+    if is_ajax:
+        return JsonResponse({
+            'success': True,
+            'message': success_msg,
+            'cart_item_count': total_items,
+            'cart_total': f"Tsh {total_price:.2f}"
+        })
+    messages.success(request, success_msg)
+    return redirect('product_detail', pk=product_id)
 
 
 from django.shortcuts import render, get_object_or_404
@@ -402,192 +389,159 @@ from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cart, CartItem, Category, Product, Order, OrderItem
 from django.contrib.auth.models import User
-
+from decimal import Decimal
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template.loader import render_to_string
 from .models import Cart, CartItem, Category, Product, Order, OrderItem
 from .models import Cart, CartItem, Product, Category, Order, OrderItem
 
+@require_http_methods(["GET", "POST"])
+@transaction.atomic
 def place_order(request):
-    """Handles the Place Order process, creates Order record, and sends emails with product images embedded."""
+    """
+    Handles order placement:
+     - Builds cart items list
+     - Computes totals
+     - Creates Order or AnonymousOrder + items
+     - Sends confirmation emails (customer + admins) with embedded images
+     - Clears cart
+    """
+    # Fetch categories for sidebar/nav
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    
-    # For authenticated users, retrieve or create cart
+    category_products = {
+        cat.id: Product.objects.filter(category__in=cat.subcategories.all()).order_by('-created_at')[:10]
+        for cat in categories
+    }
+
+    # Identify the active cart
     if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart = Cart.objects.filter(user=request.user, is_ordered=False).first()
     else:
-        # For anonymous users, handle cart using session
         cart_id = request.session.get('cart_id')
-        if cart_id:
-            cart = Cart.objects.filter(id=cart_id).first()
-        else:
-            cart = None
-    
-    if cart:
-        cart_items = CartItem.objects.filter(cart=cart)
-    else:
-        cart_items = []
+        cart = Cart.objects.filter(id=cart_id, is_ordered=False).first() if cart_id else None
 
-    # For category products
-    category_products = {}
-    for category in categories:
-        products = Product.objects.filter(category__in=category.subcategories.all()).order_by('-created_at')
-        category_products[category.id] = products
-        
-    if not cart_items:
+    if not cart or not cart.cart_items.exists():
+        messages.warning(request, _("Your cart is empty."))
         return redirect('shop')
-    
-    if request.method == 'POST':
-        # Retrieve data from the form
-        city = request.POST.get('city')
-        address = request.POST.get('address')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
 
-        # Calculate the total price for each product and the grand total
-        grand_total = 0
-        calculated_items = []
-        for item in cart_items:
-            total_price = item.product.price * item.quantity
-            grand_total += total_price
-            calculated_items.append({
-                "product_name": item.product.name,
-                "quantity": item.quantity,
-                "unit_price": item.product.price,
-                "total_price": total_price,
-                "image_name": item.product.image.name,
-                "image_url": item.product.image.url,
-            })
-        
-        # Create Order record
-        order = Order.objects.create(
-            customer=request.user if request.user.is_authenticated else None,
-            customer_name=city,
-            customer_email=email,
-            customer_phone=phone,
-            delivery_address=address,
-            total_amount=grand_total,
-            status='pending'
-        )
-        
-        # Create OrderItems
-        for item in cart_items:
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price=item.product.price
-            )
-        
-        # Prepare the HTML message body with cart data for the customer
-        html_content = render_to_string(
-            'products/order_email_template.html',
-            {
-                "calculated_items": calculated_items,  # Pass the calculated items
-                "user": request.user,
-                "grand_total": grand_total,
-                "customer_phone": phone,  # Use phone from form
-                "username": city,
-                "address": address,
-                "order_id": order.id,
-            }
-        )
-
-        # Create the email with embedded images for the customer
-        email_message = EmailMultiAlternatives(
-            subject=f"Order Confirmation - Order #{order.id}",
-            body="Your order has been successfully placed.",
-            from_email="fmklinkcompany@gmail.com",
-            to=[email],  # Use the email from the form
-        )
-        email_message.attach_alternative(html_content, "text/html")
-
-        # Embed product images as MIME images
-        for item in calculated_items:
-            with open(item["image_url"][1:], 'rb') as img_file:  # Adjust to strip leading slash from image URL
-                email_message.attach(
-                    item["image_name"],
-                    img_file.read(),
-                    'image/jpeg'
-                )
-                html_content = html_content.replace(
-                    item["image_url"],
-                    f'cid:{item["image_name"]}'  # Use CID to embed image in email
-                )
-        email_message.attach_alternative(html_content, "text/html")
-
-        # Send the email to the customer
-        email_message.send()
-
-        # Notify the superuser about the order with form data
-        superusers = User.objects.filter(is_superuser=True)
-        if superusers.exists():
-            admin_emails = [user.email for user in superusers if user.email]
-            if admin_emails:
-                admin_subject = f"New Order #{order.id} from {request.user.username if request.user.is_authenticated else 'Anonymous'}"
-
-                # Prepare the admin email message
-                admin_message = render_to_string(
-                    'products/admin_order_notification.html',
-                    {
-                        "user": request.user,
-                        "calculated_items": calculated_items,
-                        "grand_total": grand_total,
-                        "customer_phone": phone,  # Pass the phone from form
-                        "username": city,  # City from form
-                        "email": email,
-                        "address": address,  # Address from form
-                        "order_id": order.id,
-                    }
-                )
-
-                # Create the admin email
-                admin_email_message = EmailMessage(
-                    subject=admin_subject,
-                    body=admin_message,
-                    from_email="fideliskagashe@gmail.com",
-                    to=admin_emails,
-                )
-
-                # Attach product images to the admin email
-                for item in calculated_items:
-                    with open(item["image_url"][1:], 'rb') as img_file:
-                        admin_email_message.attach(
-                            item["image_name"],
-                            img_file.read(),
-                            'image/jpeg'
-                        )
-                        admin_message = admin_message.replace(
-                            item["image_url"],
-                            f'cid:{item["image_name"]}'  # Embed images in the email
-                        )
-                
-                admin_email_message.content_subtype = "html"
-                admin_email_message.send()
-
-        # Clear the cart after sending the order confirmation
-        if cart:
-            cart_items.delete()
-
-        # Render the confirmation page
-        return render(request, 'products/order_confirmation.html',
-                       {"grand_total": grand_total,
-                        "calculated_items": calculated_items,
-                        "order_id": order.id,
-                        'categories': categories,
-                        'category_products': category_products,
-                        'theme': request.session.get('theme', 'light'),
-                        })
-    else:
-        # If the request is not POST, return the order page
+    if request.method == 'GET':
         return render(request, 'products/place_order.html', {
             'categories': categories,
             'category_products': category_products,
-            'cart_item_count': get_cart_item_count(request),  # assuming you have a get_cart_item_count utility function
+            'cart_item_count': cart.cart_items.aggregate(total=Sum('quantity'))['total'] or 0,
             'theme': request.session.get('theme', 'light'),
         })
 
+    # POST: collect form data
+    name    = request.POST.get('name', '').strip()
+    email   = request.POST.get('email', '').strip()
+    phone   = request.POST.get('phone', '').strip()
+    address = request.POST.get('address', '').strip()
+
+    # Build items list and grand total
+    calculated_items = []
+    grand_total = Decimal('0.00')
+    for item in cart.cart_items.select_related('product'):
+        unit_price = item.product.price
+        line_total = unit_price * item.quantity
+        grand_total += line_total
+        calculated_items.append({
+            'product_id':   item.product.id,
+            'name':         item.product.name,
+            'quantity':     item.quantity,
+            'unit_price':   float(unit_price),
+            'line_total':   float(line_total),
+            'image_name':   item.product.image.name,
+            'image_path':   item.product.image.path,
+        })
+
+    # Create order record
+    if request.user.is_authenticated:
+        order = Order.objects.create(
+            customer=request.user,
+            customer_name=name,
+            customer_email=email,
+            customer_phone=phone,
+            delivery_address=address,
+            total_amount=grand_total
+        )
+        for data in calculated_items:
+            OrderItem.objects.create(
+                order=order,
+                product_id=data['product_id'],
+                quantity=data['quantity'],
+                price=Decimal(str(data['unit_price']))
+            )
+    else:
+        order = AnonymousOrder.objects.create(
+            customer_name=name,
+            customer_email=email,
+            customer_phone=phone,
+            delivery_address=address,
+            order_data=calculated_items,
+            total_amount=grand_total
+        )
+
+    # Mark cart ordered and clear session
+    cart.is_ordered = True
+    cart.save(update_fields=['is_ordered'])
+    request.session.pop('cart_id', None)
+
+    # Prepare email context
+    email_ctx = {
+        'order':          order,
+        'items':          calculated_items,
+        'grand_total':    grand_total,
+        'customer_name':  name,
+        'address':        address,
+    }
+
+    # Send customer confirmation
+    subject = _("Order Confirmation #%s") % order.id
+    html_body = render_to_string('products/order_email_template.html', email_ctx)
+    msg = EmailMultiAlternatives(subject, '', to=[email])
+    msg.attach_alternative(html_body, 'text/html')
+    for itm in calculated_items:
+        with open(itm['image_path'], 'rb') as img:
+            msg.attach(itm['image_name'], img.read(), 'image/jpeg')
+            html_body = html_body.replace(
+                itm['image_name'], f"cid:{itm['image_name']}"
+            )
+    msg.attach_alternative(html_body, 'text/html')
+    msg.send(fail_silently=True)
+
+    # Notify admins
+    admin_emails = list(
+        User.objects.filter(is_superuser=True, email__isnull=False)
+                    .values_list('email', flat=True)
+    )
+    if admin_emails:
+        admin_ctx = {**email_ctx, 'is_anonymous': not request.user.is_authenticated}
+        admin_html = render_to_string('products/admin_order_notification.html', admin_ctx)
+        admin_msg = EmailMessage(
+            _("New Order #%s") % order.id, admin_html, to=admin_emails
+        )
+        admin_msg.content_subtype = 'html'
+        for itm in calculated_items:
+            with open(itm['image_path'], 'rb') as img:
+                admin_msg.attach(itm['image_name'], img.read(), 'image/jpeg')
+                admin_html = admin_html.replace(
+                    itm['image_name'], f"cid:{itm['image_name']}"
+                )
+        admin_msg.send(fail_silently=True)
+
+    # Finally, render confirmation page
+    return render(request, 'products/order_confirmation.html', {
+        'order': order,
+        'items': calculated_items,
+        'grand_total': grand_total,
+        'categories': categories,
+        'category_products': category_products,
+        'theme': request.session.get('theme', 'light'),
+    })
 
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -634,34 +588,73 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .models import Cart, CartItem, Product
 
+# views.py
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from .models import Cart, CartItem, Product
+
 def update_cart(request, product_id):
-    """Updates the quantity of a product in the cart."""
-    if request.method == "POST":
-        # Ensure the user has a cart
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        
-        # Retrieve the product and validate the quantity
-        product = get_object_or_404(Product, id=product_id)
-        try:
-            new_quantity = int(request.POST.get('quantity', 1))
-        except ValueError:
-            messages.error(request, "Invalid quantity entered.")
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', 'view_cart'))
+    """Updates the quantity of a product in the cart for both logged-in and anonymous users."""
+    if request.method != "POST":
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "view_cart"))
 
-        if new_quantity < 1:
-            messages.error(request, "Quantity must be at least 1.")
-        else:
-            # Retrieve the cart item and update its quantity
-            cart_item = CartItem.objects.filter(cart=cart, product=product).first()
-            if cart_item:
-                if product.stock >= new_quantity:
-                    cart_item.quantity = new_quantity
-                    cart_item.save()
-                    messages.success(request, f"Updated quantity for {product.name} to {new_quantity}.")
-                else:
-                    messages.error(request, f"Not enough stock for {product.name}. Only {product.stock} available.")
-            else:
-                messages.error(request, f"{product.name} not found in your cart.")
+    # 1) Identify or create the active cart
+    if request.user.is_authenticated:
+        qs = Cart.objects.filter(
+            user=request.user,
+            session_key__isnull=True,
+            is_ordered=False
+        )
+        cart = qs.first()
+        if not cart:
+            cart = Cart.objects.create(user=request.user, is_ordered=False)
+    else:
+        # ensure session exists
+        if not request.session.session_key:
+            request.session.create()
+        skey = request.session.session_key
 
-    # Redirect to the previous page (view_cart in this case)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', 'view_cart'))
+        qs = Cart.objects.filter(
+            user__isnull=True,
+            session_key=skey,
+            is_ordered=False
+        )
+        cart = qs.first()
+        if not cart:
+            cart = Cart.objects.create(session_key=skey, is_ordered=False)
+        request.session['cart_id'] = cart.id
+
+    # 2) Fetch product and parse new quantity
+    product = get_object_or_404(Product, id=product_id)
+    try:
+        new_qty = int(request.POST.get("quantity", 1))
+        if new_qty < 1:
+            raise ValueError
+    except (TypeError, ValueError):
+        messages.error(request, "Please enter a valid quantity (1 or more).")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "view_cart"))
+
+    # 3) Load the cart item
+    cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+    if not cart_item:
+        messages.error(request, f"{product.name} is not in your cart.")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "view_cart"))
+
+    # 4) Check stock
+    if new_qty > product.stock:
+        messages.error(
+            request,
+            f"Not enough stock for {product.name}. Only {product.stock} available."
+        )
+    else:
+        cart_item.quantity = new_qty
+        cart_item.save()
+        messages.success(
+            request,
+            f"Updated {product.name} quantity to {new_qty}."
+        )
+
+    # 5) Redirect back
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "view_cart"))

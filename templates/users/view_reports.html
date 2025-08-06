@@ -95,6 +95,39 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination -->
+            {% if reports.has_other_pages %}
+            <div class="mt-6 flex justify-center">
+                <nav class="flex space-x-2">
+                    {% if reports.has_previous %}
+                        <a href="?page=1{% if request.GET.seller %}&seller={{ request.GET.seller }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}" 
+                           class="px-3 py-2 {% if theme == 'dark' %}bg-gray-700 text-gray-300 hover:bg-gray-600{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} rounded transition duration-200">
+                            {% trans "First" %}
+                        </a>
+                        <a href="?page={{ reports.previous_page_number }}{% if request.GET.seller %}&seller={{ request.GET.seller }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}" 
+                           class="px-3 py-2 {% if theme == 'dark' %}bg-gray-700 text-gray-300 hover:bg-gray-600{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} rounded transition duration-200">
+                            {% trans "Previous" %}
+                        </a>
+                    {% endif %}
+                    
+                    <span class="px-3 py-2 {% if theme == 'dark' %}bg-blue-600 text-white{% else %}bg-blue-500 text-white{% endif %} rounded">
+                        {% trans "Page" %} {{ reports.number }} {% trans "of" %} {{ reports.paginator.num_pages }}
+                    </span>
+                    
+                    {% if reports.has_next %}
+                        <a href="?page={{ reports.next_page_number }}{% if request.GET.seller %}&seller={{ request.GET.seller }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}" 
+                           class="px-3 py-2 {% if theme == 'dark' %}bg-gray-700 text-gray-300 hover:bg-gray-600{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} rounded transition duration-200">
+                            {% trans "Next" %}
+                        </a>
+                        <a href="?page={{ reports.paginator.num_pages }}{% if request.GET.seller %}&seller={{ request.GET.seller }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}" 
+                           class="px-3 py-2 {% if theme == 'dark' %}bg-gray-700 text-gray-300 hover:bg-gray-600{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} rounded transition duration-200">
+                            {% trans "Last" %}
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
         {% else %}
             <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %} text-center py-8">{% trans "No reports found for the selected criteria." %}</p>
         {% endif %}

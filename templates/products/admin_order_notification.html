@@ -84,10 +84,13 @@
 <body>
 
     <h2>New Order from {{ username }}</h2>
+    {% if is_anonymous %}
+    <p style="color: #f59e0b; font-weight: bold;">⚠️ This is an ANONYMOUS order (customer not registered)</p>
+    {% endif %}
     <p><strong>Customer Email:</strong> {{ email }}</p>
     <p><strong>Customer Phone Number:</strong> {{ customer_phone }}</p>
     <p><strong>Location:</strong> {{ address }}</p>
-    <p>A new order has been placed. Below are the details:</p>
+    <p>A new order has been placed. Please assign a seller to handle this order. Below are the details:</p>
 
     <!-- Order Details List -->
     <div class="product-list">

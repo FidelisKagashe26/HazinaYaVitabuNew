@@ -4,6 +4,7 @@ from .views import *
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 
+
 urlpatterns = [
     # Authentication URLs
     path('register/', views.register_view, name='register'),
@@ -18,10 +19,12 @@ urlpatterns = [
     
     # Order management URLs
     path('accept-order/<int:order_id>/', views.accept_order, name='accept_order'),
+    path('accept-anonymous-order/<int:order_id>/', views.accept_anonymous_order, name='accept_anonymous_order'),
     path('complete-order/<int:order_id>/', views.complete_order, name='complete_order'),
     
     # Report URLs
     path('daily-report/', views.daily_report_view, name='daily_report'),
+    path('book-sales-report/', views.book_sales_report, name='book_sales_report'),
     path('view-reports/', views.view_reports, name='view_reports'),
     
     # User management URLs

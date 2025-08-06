@@ -70,6 +70,7 @@
             <div>
                 <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">{% trans "Email" %}</label>
                 {{ form.email }}
+                <p class="text-xs {% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %} mt-1">{% trans "Email is optional but recommended for order notifications" %}</p>
             </div>
             
             <div>

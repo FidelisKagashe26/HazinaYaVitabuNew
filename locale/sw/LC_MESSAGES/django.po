@@ -440,3 +440,141 @@ msgstr "Masaa ya Kufanya Kazi"
 
 msgid "No report filled for today. Please fill your daily report."
 msgstr "Hakuna ripoti iliyojazwa leo. Tafadhali jaza ripoti yako ya kila siku."
+
+msgid "This username is already taken. Please choose another."
+msgstr "Jina hili la mtumiaji tayari limetumika. Tafadhali chagua jingine."
+
+msgid "Username must be at least 3 characters long."
+msgstr "Jina la mtumiaji lazima liwe na angalau herufi 3."
+
+msgid "Username can only contain letters, numbers, and underscores."
+msgstr "Jina la mtumiaji linaweza kuwa na herufi, nambari, na mistari ya chini tu."
+
+msgid "This phone number is already registered. Please use a different number."
+msgstr "Namba hii ya simu tayari imesajiliwa. Tafadhali tumia namba nyingine."
+
+msgid "Enter your email (optional)"
+msgstr "Ingiza barua pepe yako (si lazima)"
+
+msgid "Email is optional but recommended for order notifications"
+msgstr "Barua pepe si lazima lakini inashauriwa kwa taarifa za maagizo"
+
+msgid "Book Sales Report"
+msgstr "Ripoti ya Mauzo ya Vitabu"
+
+msgid "Record individual book sales for"
+msgstr "Rekodi mauzo ya vitabu vya"
+
+msgid "Record Book Sale"
+msgstr "Rekodi Uuzaji wa Kitabu"
+
+msgid "Select Book"
+msgstr "Chagua Kitabu"
+
+msgid "Choose a book..."
+msgstr "Chagua kitabu..."
+
+msgid "Sold for Money"
+msgstr "Viliouzwa kwa Pesa"
+
+msgid "Given for Free"
+msgstr "Vilitolewa Bure"
+
+msgid "Sale Price per Book"
+msgstr "Bei ya Uuzaji kwa Kitabu"
+
+msgid "Notes"
+msgstr "Maelezo"
+
+msgid "Additional notes about this sale..."
+msgstr "Maelezo ya ziada kuhusu uuzaji huu..."
+
+msgid "Record Sale"
+msgstr "Rekodi Uuzaji"
+
+msgid "Today's Book Sales"
+msgstr "Mauzo ya Vitabu ya Leo"
+
+msgid "Sold"
+msgstr "Viliouzwa"
+
+msgid "Free"
+msgstr "Bure"
+
+msgid "Price"
+msgstr "Bei"
+
+msgid "Revenue"
+msgstr "Mapato"
+
+msgid "Today's Summary"
+msgstr "Muhtasari wa Leo"
+
+msgid "Total Books Sold"
+msgstr "Jumla ya Vitabu Vilivyouzwa"
+
+msgid "Total Revenue"
+msgstr "Jumla ya Mapato"
+
+msgid "No book sales recorded today."
+msgstr "Hakuna mauzo ya vitabu yaliyorekodiwa leo."
+
+msgid "Book Sales"
+msgstr "Mauzo ya Vitabu"
+
+msgid "Only sellers can access book sales reports."
+msgstr "Wauzaji tu ndio wanaweza kufikia ripoti za mauzo ya vitabu."
+
+msgid "Book sale report saved successfully!"
+msgstr "Ripoti ya uuzaji wa kitabu imehifadhiwa kwa ufanisi!"
+
+msgid "Anonymous order accepted successfully!"
+msgstr "Agizo la mtu asiyejulikana limekubaliwa kwa ufanisi!"
+
+msgid "Anonymous Order"
+msgstr "Agizo la Mtu Asiyejulikana"
+
+msgid "Anonymous"
+msgstr "Asiyejulikana"
+
+msgid "Registered"
+msgstr "Amesajiliwa"
+
+msgid "Recent Anonymous Orders"
+msgstr "Maagizo ya Hivi Karibuni ya Watu Wasiojulikana"
+
+msgid "Processed"
+msgstr "Imesindikwa"
+
+msgid "Pending"
+msgstr "Inasubiri"
+
+msgid "Anonymous Orders"
+msgstr "Maagizo ya Watu Wasiojulikana"
+
+msgid "Seller Menu"
+msgstr "Menyu ya Muuzaji"
+
+msgid "Admin Menu"
+msgstr "Menyu ya Msimamizi"
+
+msgid "Django Admin"
+msgstr "Msimamizi wa Django"
+
+msgid "First"
+msgstr "Wa Kwanza"
+
+msgid "Previous"
+msgstr "Uliopita"
+
+msgid "Page"
+msgstr "Ukurasa"
+
+msgid "of"
+msgstr "wa"
+
+msgid "Next"
+msgstr "Unaofuata"
+
+msgid "Last"
+msgstr "Wa Mwisho"

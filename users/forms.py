@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+import re
 
 #Added
 from django.contrib.auth.forms import AuthenticationForm
@@ -53,7 +54,7 @@ from .models import User, UserProfile
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
-        required=True,
+        required=False,  # Make email optional
         widget=forms.EmailInput(attrs={
             'class': 'mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:border-blue-500',
             'placeholder': _('Enter your email')
@@ -103,6 +104,22 @@ class RegistrationForm(UserCreationForm):
             'placeholder': _('Confirm Password')
         })
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            # Check for username uniqueness
+            if User.objects.filter(username=username).exists():
+                raise ValidationError(_("This username is already taken. Please choose another."))
+            
+            # Username validation rules
+            if len(username) < 3:
+                raise ValidationError(_("Username must be at least 3 characters long."))
+            
+            if not re.match(r'^[a-zA-Z0-9_]+$', username):
+                raise ValidationError(_("Username can only contain letters, numbers, and underscores."))
+        
+        return username
+
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number').strip()
 
@@ -117,12 +134,17 @@ class RegistrationForm(UserCreationForm):
         if not all(c.isdigit() or c == '+' for c in phone_number):
             raise ValidationError(_("Phone number must only contain digits and the '+' sign."))
 
+        # Check for phone number uniqueness
+        from .models import UserProfile
+        if UserProfile.objects.filter(phone_number=phone_number).exists():
+            raise ValidationError(_("This phone number is already registered. Please use a different number."))
         return phone_number
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise ValidationError(_("A user with this email already exists."))
+        if email:  # Only validate if email is provided (since it's optional)
+            if User.objects.filter(email=email).exists():
+                raise ValidationError(_("A user with this email already exists."))
         return email
 
 

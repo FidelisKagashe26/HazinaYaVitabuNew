@@ -16,16 +16,16 @@ Order Confirmation
     <div class="mb-4">
         <h4 class="text-gray-800 font-semibold">Order Summary:</h4>
         <ul class="space-y-2 mt-2">
-            {% for item in calculated_items %}
+            {% for item in items %}
             <li class="flex items-center justify-between border-b py-2">
                 <div class="flex items-center">
-                    <img src="{{ item.image_url }}" alt="{{ item.product_name }}" class="w-16 h-16 rounded object-contain mr-4">
+                    <img src="{{ item.image_path }}" alt="{{ item.image_name }}" class="w-16 h-16 rounded object-contain mr-4">
                     <div>
-                        <p class="font-semibold">{{ item.product_name }}</p>
+                        <p class="font-semibold">{{ item.image_name }}</p>
                         <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
                     </div>
                 </div>
-                <p class="text-sm font-bold text-blue-600">{{ item.total_price|format_currency }}</p>
+                <p class="text-sm font-bold text-blue-600">{{ item.unit_price|format_currency }}</p>
             </li>
             {% endfor %}
         </ul>
