@@ -64,7 +64,7 @@ class PasswordResetCodeAdmin(admin.ModelAdmin):
 
 @admin.register(DailyReport)
 class DailyReportAdmin(admin.ModelAdmin):
-    list_display = ('seller_name', 'date', 'books_sold_money', 'books_given_free', 'houses_visited', 'teachings_given', 'working_hours')
+    list_display = ('seller_name', 'date', 'total_books_sold', 'total_books_given_free', 'houses_visited', 'teachings_given', 'working_hours')
     list_filter = ('date', 'seller__username')
     search_fields = ('seller__username', 'seller__email')
     readonly_fields = ('created_at', 'updated_at')

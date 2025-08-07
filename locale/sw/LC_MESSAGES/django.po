@@ -578,3 +578,81 @@ msgstr "Unaofuata"
 
 msgid "Last"
 msgstr "Wa Mwisho"
+
+msgid "Customer"
+msgstr "Mteja"
+
+msgid "Phone"
+msgstr "Simu"
+
+msgid "copies of"
+msgstr "nakala za"
+
+msgid "Different Books Sold"
+msgstr "Vitabu Tofauti Vilivyouzwa"
+
+msgid "Monthly Reports"
+msgstr "Ripoti za Kila Mwezi"
+
+msgid "Generate and view monthly performance reports"
+msgstr "Tengeneza na uone ripoti za utendaji wa kila mwezi"
+
+msgid "Generate Monthly Report"
+msgstr "Tengeneza Ripoti ya Mwezi"
+
+msgid "Month"
+msgstr "Mwezi"
+
+msgid "Year"
+msgstr "Mwaka"
+
+msgid "Generate Reports"
+msgstr "Tengeneza Ripoti"
+
+msgid "Monthly Reports for"
+msgstr "Ripoti za Mwezi za"
+
+msgid "Books Free"
+msgstr "Vitabu Bure"
+
+msgid "Houses"
+msgstr "Nyumba"
+
+msgid "Teachings"
+msgstr "Mafundisho"
+
+msgid "Total Hours"
+msgstr "Jumla ya Masaa"
+
+msgid "Days Worked"
+msgstr "Siku za Kufanya Kazi"
+
+msgid "No monthly reports available. Generate reports using the form above."
+msgstr "Hakuna ripoti za kila mwezi zinazopatikana. Tengeneza ripoti kwa kutumia fomu hapo juu."
+
+msgid "Select Report Date"
+msgstr "Chagua Tarehe ya Ripoti"
+
+msgid "Report Date"
+msgstr "Tarehe ya Ripoti"
+
+msgid "Load Report"
+msgstr "Pakia Ripoti"
+
+msgid "Add to Cart"
+msgstr "Ongeza Kitengani"
+
+msgid "Out of Stock"
+msgstr "Haijapatikana"
+
+msgid "An error occurred. Please try again."
+msgstr "Hitilafu imetokea. Tafadhali jaribu tena."
+
+msgid "Generate & View"
+msgstr "Tengeneza na Uone"
+
+msgid "Only administrators can generate reports."
+msgstr "Wasimamizi tu ndio wanaweza kutengeneza ripoti."
+
+msgid "Only administrators can view monthly reports."
+msgstr "Wasimamizi tu ndio wanaweza kuona ripoti za kila mwezi."

@@ -19,9 +19,6 @@
                 <a href="{% url 'daily_report' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}bg-blue-600 text-white{% else %}bg-blue-100 text-blue-700{% endif %}">
                     <i class="bi bi-calendar-check mr-2"></i>{% trans "Daily Report" %}
                 </a>
-                <a href="{% url 'book_sales_report' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}text-gray-300 hover:bg-gray-700{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition duration-200">
-                    <i class="bi bi-book mr-2"></i>{% trans "Book Sales" %}
-                </a>
                 <a href="{% url 'shop' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}text-gray-300 hover:bg-gray-700{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition duration-200">
                     <i class="bi bi-bag mr-2"></i>{% trans "View Products" %}
                 </a>
@@ -35,12 +32,32 @@
         <header class="mb-8 pb-6 border-b-2 {% if theme == 'dark' %}border-blue-400{% else %}border-blue-400{% endif %}">
             <h1 class="text-4xl font-extrabold text-center {% if theme == 'dark' %}text-blue-400{% else %}text-blue-800{% endif %}">{% trans "Daily Report" %}</h1>
             <p class="text-center text-lg mt-3 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %}">
-                {% trans "Fill your daily work report" %} - {{ report.date|date:"F d, Y" }}
+                {% trans "Fill your daily work report" %} - {{ report_date|date:"F d, Y" }}
             </p>
         </header>
 
-        <div class="max-w-2xl mx-auto">
-            <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-8 rounded-lg shadow-lg border">
+        <!-- Date Selection -->
+        <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border mb-6">
+            <h2 class="text-xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Select Report Date" %}</h2>
+            <form method="GET" class="flex items-center space-x-4">
+                <div>
+                    <label for="date" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Report Date" %}</label>
+                    <input type="date" name="date" id="date" value="{{ report_date|date:'Y-m-d' }}"
+                           class="p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
+                        {% trans "Load Report" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Daily Report Form -->
+            <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+                <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Daily Work Report" %}</h2>
+                
                 {% if messages %}
                     {% for message in messages %}
                         <div class="mb-4 p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-300{% else %}bg-red-100 text-red-800 border border-red-300{% endif %}">
@@ -49,25 +66,102 @@
                     {% endfor %}
                 {% endif %}
                 
-                <form method="post" class="space-y-6">
+                <form method="post" class="space-y-6" id="dailyReportForm">
                     {% csrf_token %}
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="books_sold_money" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Books Sold for Money" %}</label>
-                            <input type="number" name="books_sold_money" id="books_sold_money" min="0" 
-                                   class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
-                                   value="{{ report.books_sold_money }}" required>
+                    <!-- Books Sold Section -->
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-semibold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-3">{% trans "Books Sold for Money" %}</h3>
+                        <div id="books-sold-container">
+                            {% for book in report.books_sold_details %}
+                            <div class="book-sold-item flex items-center space-x-2 mb-2">
+                                <select name="book_sold_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded">
+                                    <option value="">{% trans "Select Book" %}</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.name }}" {% if product.name == book.book_name %}selected{% endif %}>{{ product.name }}</option>
+                                    {% endfor %}
+                                    <option value="custom" {% if book.book_name not in products_names %}selected{% endif %}>{% trans "Custom Book" %}</option>
+                                </select>
+                                <input type="text" name="custom_book_sold[]" placeholder="{% trans 'Enter book name' %}" 
+                                       class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" 
+                                       value="{% if book.book_name not in products_names %}{{ book.book_name }}{% endif %}" style="display: {% if book.book_name not in products_names %}block{% else %}none{% endif %};">
+                                <input type="number" name="book_sold_quantity[]" min="0" value="{{ book.quantity }}" 
+                                       class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+                                <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            {% empty %}
+                            <div class="book-sold-item flex items-center space-x-2 mb-2">
+                                <select name="book_sold_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded">
+                                    <option value="">{% trans "Select Book" %}</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.name }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                    <option value="custom">{% trans "Custom Book" %}</option>
+                                </select>
+                                <input type="text" name="custom_book_sold[]" placeholder="{% trans 'Enter book name' %}" 
+                                       class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" style="display: none;">
+                                <input type="number" name="book_sold_quantity[]" min="0" value="0" 
+                                       class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+                                <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
                         </div>
-                        
-                        <div>
-                            <label for="books_given_free" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Books Given for Free" %}</label>
-                            <input type="number" name="books_given_free" id="books_given_free" min="0" 
-                                   class="w-full p-3 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white focus:border-blue-400{% else %}border-gray-300 focus:border-blue-500{% endif %} rounded-lg focus:outline-none" 
-                                   value="{{ report.books_given_free }}" required>
-                        </div>
+                        <button type="button" onclick="addBookSoldItem()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-2">
+                            <i class="bi bi-plus"></i> {% trans "Add Book" %}
+                        </button>
                     </div>
                     
+                    <!-- Books Given Free Section -->
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-semibold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-3">{% trans "Books Given for Free" %}</h3>
+                        <div id="books-free-container">
+                            {% for book in report.books_given_free_details %}
+                            <div class="book-free-item flex items-center space-x-2 mb-2">
+                                <select name="book_free_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded">
+                                    <option value="">{% trans "Select Book" %}</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.name }}" {% if product.name == book.book_name %}selected{% endif %}>{{ product.name }}</option>
+                                    {% endfor %}
+                                    <option value="custom" {% if book.book_name not in products_names %}selected{% endif %}>{% trans "Custom Book" %}</option>
+                                </select>
+                                <input type="text" name="custom_book_free[]" placeholder="{% trans 'Enter book name' %}" 
+                                       class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" 
+                                       value="{% if book.book_name not in products_names %}{{ book.book_name }}{% endif %}" style="display: {% if book.book_name not in products_names %}block{% else %}none{% endif %};">
+                                <input type="number" name="book_free_quantity[]" min="0" value="{{ book.quantity }}" 
+                                       class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+                                <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            {% empty %}
+                            <div class="book-free-item flex items-center space-x-2 mb-2">
+                                <select name="book_free_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded">
+                                    <option value="">{% trans "Select Book" %}</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.name }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                    <option value="custom">{% trans "Custom Book" %}</option>
+                                </select>
+                                <input type="text" name="custom_book_free[]" placeholder="{% trans 'Enter book name' %}" 
+                                       class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" style="display: none;">
+                                <input type="number" name="book_free_quantity[]" min="0" value="0" 
+                                       class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+                                <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" onclick="addBookFreeItem()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-2">
+                            <i class="bi bi-plus"></i> {% trans "Add Book" %}
+                        </button>
+                    </div>
+                    
+                    <!-- Other Activities -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="houses_visited" class="block text-sm font-medium {% if theme == 'dark' %}text-gray-300{% else %}text-gray-700{% endif %} mb-2">{% trans "Houses Visited" %}</label>
@@ -103,7 +197,126 @@
                     </button>
                 </form>
             </div>
+
+            <!-- Report Summary -->
+            <div class="{% if theme == 'dark' %}bg-gray-800 border-gray-700{% else %}bg-white{% endif %} p-6 rounded-lg shadow-lg border">
+                <h2 class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-700{% endif %} mb-4">{% trans "Today's Summary" %}</h2>
+                
+                {% if report.books_sold_details or report.books_given_free_details %}
+                    <div class="space-y-4">
+                        {% if report.books_sold_details %}
+                        <div>
+                            <h4 class="font-semibold {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %} mb-2">{% trans "Books Sold" %}:</h4>
+                            {% for book in report.books_sold_details %}
+                            <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ book.quantity }} {% trans "copies of" %} "{{ book.book_name }}"</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if report.books_given_free_details %}
+                        <div>
+                            <h4 class="font-semibold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} mb-2">{% trans "Books Given Free" %}:</h4>
+                            {% for book in report.books_given_free_details %}
+                            <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ book.quantity }} {% trans "copies of" %} "{{ book.book_name }}"</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t {% if theme == 'dark' %}border-gray-700{% else %}border-gray-200{% endif %}">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold {% if theme == 'dark' %}text-purple-400{% else %}text-purple-600{% endif %}">{{ report.houses_visited }}</div>
+                                <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Houses Visited" %}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold {% if theme == 'dark' %}text-orange-400{% else %}text-orange-600{% endif %}">{{ report.teachings_given }}</div>
+                                <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Teachings Given" %}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center pt-4 border-t {% if theme == 'dark' %}border-gray-700{% else %}border-gray-200{% endif %}">
+                            <div class="text-2xl font-bold {% if theme == 'dark' %}text-yellow-400{% else %}text-yellow-600{% endif %}">{{ report.working_hours }}</div>
+                            <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Working Hours" %}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %}">{% trans "No report data for this date." %}</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function addBookSoldItem() {
+    const container = document.getElementById('books-sold-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'book-sold-item flex items-center space-x-2 mb-2';
+    newItem.innerHTML = `
+        <select name="book_sold_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" onchange="toggleCustomInput(this)">
+            <option value="">{% trans "Select Book" %}</option>
+            {% for product in products %}
+                <option value="{{ product.name }}">{{ product.name }}</option>
+            {% endfor %}
+            <option value="custom">{% trans "Custom Book" %}</option>
+        </select>
+        <input type="text" name="custom_book_sold[]" placeholder="{% trans 'Enter book name' %}" 
+               class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" style="display: none;">
+        <input type="number" name="book_sold_quantity[]" min="0" value="0" 
+               class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+        <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    container.appendChild(newItem);
+}
+
+function addBookFreeItem() {
+    const container = document.getElementById('books-free-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'book-free-item flex items-center space-x-2 mb-2';
+    newItem.innerHTML = `
+        <select name="book_free_name[]" class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" onchange="toggleCustomInput(this)">
+            <option value="">{% trans "Select Book" %}</option>
+            {% for product in products %}
+                <option value="{{ product.name }}">{{ product.name }}</option>
+            {% endfor %}
+            <option value="custom">{% trans "Custom Book" %}</option>
+        </select>
+        <input type="text" name="custom_book_free[]" placeholder="{% trans 'Enter book name' %}" 
+               class="flex-1 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" style="display: none;">
+        <input type="number" name="book_free_quantity[]" min="0" value="0" 
+               class="w-20 p-2 border {% if theme == 'dark' %}border-gray-600 bg-gray-700 text-white{% else %}border-gray-300{% endif %} rounded" placeholder="Qty">
+        <button type="button" onclick="removeBookItem(this)" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    container.appendChild(newItem);
+}
+
+function removeBookItem(button) {
+    button.closest('.book-sold-item, .book-free-item').remove();
+}
+
+function toggleCustomInput(select) {
+    const customInput = select.nextElementSibling;
+    if (select.value === 'custom') {
+        customInput.style.display = 'block';
+        customInput.required = true;
+    } else {
+        customInput.style.display = 'none';
+        customInput.required = false;
+        customInput.value = '';
+    }
+}
+
+// Initialize custom input toggles on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('select[name="book_sold_name[]"], select[name="book_free_name[]"]');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            toggleCustomInput(this);
+        });
+    });
+});
+</script>
 {% endblock %}

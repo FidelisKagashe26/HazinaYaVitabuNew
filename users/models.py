@@ -49,8 +49,8 @@ class PasswordResetCode(models.Model):
 class DailyReport(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='daily_reports')
     date = models.DateField(default=timezone.now)
-    books_sold_money = models.IntegerField(default=0, help_text="Number of books sold for money")
-    books_given_free = models.IntegerField(default=0, help_text="Number of books given for free")
+    books_sold_details = models.JSONField(default=list, help_text="List of books sold with quantities")
+    books_given_free_details = models.JSONField(default=list, help_text="List of books given free with quantities")
     houses_visited = models.IntegerField(default=0, help_text="Number of houses visited")
     teachings_given = models.IntegerField(default=0, help_text="Number of teachings given")
     working_hours = models.DecimalField(max_digits=4, decimal_places=2, default=0, help_text="Working hours in a day")
@@ -64,6 +64,16 @@ class DailyReport(models.Model):
     
     def __str__(self):
         return f"Report for {self.seller.username} - {self.date}"
+    
+    @property
+    def total_books_sold(self):
+        """Calculate total books sold from details"""
+        return sum(item.get('quantity', 0) for item in self.books_sold_details)
+    
+    @property
+    def total_books_given_free(self):
+        """Calculate total books given free from details"""
+        return sum(item.get('quantity', 0) for item in self.books_given_free_details)
 
 
 class MonthlyReport(models.Model):
@@ -139,6 +149,7 @@ class AnonymousOrder(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     is_processed = models.BooleanField(default=False)
+    assigned_seller = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_anonymous_orders')
     
     def __str__(self):
         return f"Anonymous Order - {self.customer_name} ({self.customer_email})"

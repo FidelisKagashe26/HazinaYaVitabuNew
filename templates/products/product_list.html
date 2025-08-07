@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load custom_filters %}
+{% load i18n %}
 
 {% block header %}
 Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_name }}{% endif %}
@@ -85,10 +86,19 @@ Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_n
         <div class="p-4 mt-auto">
             <h2 class="text-lg font-semibold text-blue-700">{{ product.name }}</h2>
             <p class="text-gray-600"><span class="font-bold">Kiasi:</span> {{ product.price|format_currency }}</p>
-            <div class="mt-4 text-center">
+            <div class="mt-4 flex justify-between items-center">
                 <a href="{% url 'product_detail' product.pk %}" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-200">
                     Tazama zaidi
                 </a>
+                {% if product.stock > 0 %}
+                <button onclick="quickAddToCart({{ product.id }}, this)" class="bg-green-600 text-white p-2 rounded-full hover:bg-green-500 transition duration-200" title="{% trans 'Add to Cart' %}">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+                {% else %}
+                <button disabled class="bg-gray-400 text-white p-2 rounded-full cursor-not-allowed" title="{% trans 'Out of Stock' %}">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -98,5 +108,93 @@ Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_n
     </p>
     {% endfor %}
 </div>
+
+<!-- Success/Error Messages Display -->
+<div id="message-container" class="fixed top-20 right-4 z-50"></div>
+
+<script>
+function quickAddToCart(productId, buttonElement) {
+    const button = buttonElement;
+    const originalContent = button.innerHTML;
+    
+    // Show loading state
+    button.disabled = true;
+    button.innerHTML = '<i class="bi bi-spinner-border animate-spin"></i>';
+    
+    const formData = new FormData();
+    formData.append('quantity', '1');
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch(`/products/add-to-cart/${productId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalContent;
+        
+        if (data.success) {
+            showMessage(data.message, 'success');
+            // Update cart count
+            if (data.cart_item_count !== undefined) {
+                document.getElementById('cart-item-count').textContent = data.cart_item_count;
+                animateCartItemCount();
+            }
+        } else {
+            showMessage(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalContent;
+        console.error('Error:', error);
+        showMessage('{% trans "An error occurred. Please try again." %}', 'error');
+    });
+}
+
+function showMessage(message, type) {
+    const container = document.getElementById('message-container');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `p-4 rounded-lg shadow-lg mb-2 transition-all duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    messageDiv.innerHTML = `
+        <div class="flex items-center justify-between">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(messageDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (messageDiv.parentElement) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
+
+function animateCartItemCount() {
+    const cartItemCount = document.getElementById('cart-item-count');
+    const cartLink = document.querySelector('a[aria-label="View cart"]');
+    
+    // Add the shine animation class
+    cartLink.classList.add('shine-animation');
+    
+    // Remove the class after the animation duration
+    setTimeout(() => {
+        cartLink.classList.remove('shine-animation');
+    }, 1000);
+}
+</script>
 
 {% endblock %}

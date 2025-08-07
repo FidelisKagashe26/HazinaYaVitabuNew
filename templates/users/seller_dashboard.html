@@ -20,9 +20,6 @@
                 <a href="{% url 'daily_report' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}text-gray-300 hover:bg-gray-700{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition duration-200">
                     <i class="bi bi-calendar-check mr-2"></i>{% trans "Daily Report" %}
                 </a>
-                <a href="{% url 'book_sales_report' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}text-gray-300 hover:bg-gray-700{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition duration-200">
-                    <i class="bi bi-book mr-2"></i>{% trans "Book Sales" %}
-                </a>
                 <a href="{% url 'shop' %}" class="block p-3 rounded-lg {% if theme == 'dark' %}text-gray-300 hover:bg-gray-700{% else %}text-gray-700 hover:bg-gray-100{% endif %} transition duration-200">
                     <i class="bi bi-bag mr-2"></i>{% trans "View Products" %}
                 </a>
@@ -53,7 +50,9 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <h3 class="font-semibold {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{% trans "Order" %} #{{ order.id }}</h3>
-                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Customer" %}:</strong> {{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Phone" %}:</strong> {{ order.customer_phone }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Email" %}:</strong> {{ order.customer_email }}</p>
                                     <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.created_at|date:"M d, Y H:i" }}</p>
                                     <p class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ order.total_amount|format_currency }}</p>
                                 </div>
@@ -73,10 +72,11 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <h3 class="font-semibold {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{% trans "Anonymous Order" %}</h3>
-                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Customer" %}:</strong> {{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Phone" %}:</strong> {{ order.customer_phone }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Email" %}:</strong> {{ order.customer_email }}</p>
                                     <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.created_at|date:"M d, Y H:i" }}</p>
                                     <p class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ order.total_amount|format_currency }}</p>
-                                    <p class="{% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %} text-xs">{{ order.customer_email }}</p>
                                 </div>
                                 <span class="px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{% trans "Anonymous" %}</span>
                             </div>
@@ -104,7 +104,9 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <h3 class="font-semibold {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{% trans "Order" %} #{{ order.id }}</h3>
-                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Customer" %}:</strong> {{ order.customer_name }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Phone" %}:</strong> {{ order.customer_phone }}</p>
+                                    <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm"><strong>{% trans "Email" %}:</strong> {{ order.customer_email }}</p>
                                     <p class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %} text-sm">{{ order.created_at|date:"M d, Y H:i" }}</p>
                                     <p class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ order.total_amount|format_currency }}</p>
                                 </div>
@@ -143,11 +145,11 @@
             {% if today_report %}
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div class="text-center">
-                        <div class="text-2xl font-bold {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %}">{{ today_report.books_sold_money }}</div>
+                        <div class="text-2xl font-bold {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %}">{{ today_report.total_books_sold }}</div>
                         <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Books Sold" %}</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %}">{{ today_report.books_given_free }}</div>
+                        <div class="text-2xl font-bold {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %}">{{ today_report.total_books_given_free }}</div>
                         <div class="text-sm {% if theme == 'dark' %}text-gray-400{% else %}text-gray-600{% endif %}">{% trans "Books Given Free" %}</div>
                     </div>
                     <div class="text-center">

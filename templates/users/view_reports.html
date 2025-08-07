@@ -78,8 +78,8 @@
                         <tr class="{% if theme == 'dark' %}border-gray-700{% else %}border-gray-200{% endif %} border-b">
                             <td class="px-4 py-2 {% if theme == 'dark' %}text-white{% else %}text-gray-800{% endif %}">{{ report.seller.username }}</td>
                             <td class="px-4 py-2 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{{ report.date|date:"M d, Y" }}</td>
-                            <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %} font-semibold">{{ report.books_sold_money }}</td>
-                            <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ report.books_given_free }}</td>
+                            <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-green-400{% else %}text-green-600{% endif %} font-semibold">{{ report.total_books_sold }}</td>
+                            <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ report.total_books_given_free }}</td>
                             <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-purple-400{% else %}text-purple-600{% endif %} font-semibold">{{ report.houses_visited }}</td>
                             <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-orange-400{% else %}text-orange-600{% endif %} font-semibold">{{ report.teachings_given }}</td>
                             <td class="px-4 py-2 text-center {% if theme == 'dark' %}text-red-400{% else %}text-red-600{% endif %} font-semibold">{{ report.working_hours }}</td>

@@ -466,7 +466,8 @@ def place_order(request):
             customer_email=email,
             customer_phone=phone,
             delivery_address=address,
-            total_amount=grand_total
+            total_amount=grand_total,
+            is_anonymous=False
         )
         for data in calculated_items:
             OrderItem.objects.create(
@@ -476,14 +477,23 @@ def place_order(request):
                 price=Decimal(str(data['unit_price']))
             )
     else:
-        order = AnonymousOrder.objects.create(
+        # Create a regular Order for anonymous users too
+        order = Order.objects.create(
+            customer=None,
             customer_name=name,
             customer_email=email,
             customer_phone=phone,
             delivery_address=address,
-            order_data=calculated_items,
-            total_amount=grand_total
+            total_amount=grand_total,
+            is_anonymous=True
         )
+        for data in calculated_items:
+            OrderItem.objects.create(
+                order=order,
+                product_id=data['product_id'],
+                quantity=data['quantity'],
+                price=Decimal(str(data['unit_price']))
+            )
 
     # Mark cart ordered and clear session
     cart.is_ordered = True
@@ -536,7 +546,7 @@ def place_order(request):
     # Finally, render confirmation page
     return render(request, 'products/order_confirmation.html', {
         'order': order,
-        'items': calculated_items,
+        'items': order.items.all(),
         'grand_total': grand_total,
         'categories': categories,
         'category_products': category_products,

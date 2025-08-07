@@ -19,13 +19,13 @@ Order Confirmation
             {% for item in items %}
             <li class="flex items-center justify-between border-b py-2">
                 <div class="flex items-center">
-                    <img src="{{ item.image_path }}" alt="{{ item.image_name }}" class="w-16 h-16 rounded object-contain mr-4">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded object-contain mr-4">
                     <div>
-                        <p class="font-semibold">{{ item.image_name }}</p>
+                        <p class="font-semibold">{{ item.product.name }}</p>
                         <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
                     </div>
                 </div>
-                <p class="text-sm font-bold text-blue-600">{{ item.unit_price|format_currency }}</p>
+                <p class="text-sm font-bold text-blue-600">{{ item.product.price|format_currency }}</p>
             </li>
             {% endfor %}
         </ul>

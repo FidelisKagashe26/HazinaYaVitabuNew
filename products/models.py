@@ -138,7 +138,7 @@ class Order(models.Model):
         ('cancelled', 'Cancelled'),
     )
     
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customer_orders')
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customer_orders', null=True, blank=True)
     seller = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='seller_orders')
     customer_name = models.CharField(max_length=100)
     customer_email = models.EmailField()
@@ -149,12 +149,14 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    is_anonymous = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"Order #{self.id} - {self.customer_name}"
+        customer_type = "Anonymous" if self.is_anonymous else "Registered"
+        return f"Order #{self.id} - {self.customer_name} ({customer_type})"
     
     def accept_order(self, seller):
         """Accept order by seller"""

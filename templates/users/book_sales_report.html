@@ -116,8 +116,8 @@
                                 <span class="{% if theme == 'dark' %}text-blue-400{% else %}text-blue-600{% endif %} font-semibold">{{ report.total_revenue|format_currency }}</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-sm">
-                                <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Sold" %}: <span class="font-semibold text-green-600">{{ report.quantity_sold_money }}</span></div>
-                                <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Free" %}: <span class="font-semibold text-blue-600">{{ report.quantity_given_free }}</span></div>
+                                <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Sold" %}: <span class="font-semibold text-green-600">{{ report.quantity_sold_money }} {% trans "copies of" %} {{ report.product.name }}</span></div>
+                                <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Free" %}: <span class="font-semibold text-blue-600">{{ report.quantity_given_free }} {% trans "copies of" %} {{ report.product.name }}</span></div>
                                 <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Price" %}: <span class="font-semibold">{{ report.sale_price|format_currency }}</span></div>
                                 <div class="{% if theme == 'dark' %}text-gray-300{% else %}text-gray-600{% endif %}">{% trans "Revenue" %}: <span class="font-semibold text-green-600">{{ report.total_revenue|format_currency }}</span></div>
                             </div>
@@ -132,9 +132,9 @@
                     <div class="mt-6 p-4 {% if theme == 'dark' %}bg-blue-900 border-blue-700{% else %}bg-blue-50 border-blue-200{% endif %} border rounded-lg">
                         <h3 class="font-bold {% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %} mb-2">{% trans "Today's Summary" %}</h3>
                         <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>{% trans "Total Books Sold" %}: <span class="font-semibold">{{ today_reports|length }}</span></div>
+                            <div>{% trans "Different Books Sold" %}: <span class="font-semibold">{{ today_reports|length }}</span></div>
                             <div>{% trans "Total Revenue" %}: <span class="font-semibold text-green-600">
-                                {% for report in today_reports %}{{ report.total_revenue|add:0 }}{% empty %}0{% endfor %}
+                                {% widthratio today_reports.0.total_revenue 1 1 %}{% for report in today_reports %}{% if not forloop.first %}{% widthratio report.total_revenue 1 1 %}{% endif %}{% endfor %}
                             </span></div>
                         </div>
                     </div>

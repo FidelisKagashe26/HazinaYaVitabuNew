@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.urls import reverse, reverse_lazy
@@ -31,6 +31,7 @@ from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
 from django.views.generic import FormView
 import random
+from datetime import date
 import string
 from django.utils.encoding import force_bytes, force_str
 from datetime import datetime, timedelta
@@ -180,9 +181,6 @@ def profile_view(request):
 @login_required
 def buyer_dashboard(request):
     """Buyer dashboard view"""
-    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    cart_item_count = get_cart_item_count(request)
-    
     # Check if user is buyer
     try:
         user_profile = request.user.userprofile
@@ -192,6 +190,9 @@ def buyer_dashboard(request):
     except UserProfile.DoesNotExist:
         # Create buyer profile if doesn't exist
         UserProfile.objects.create(user=request.user, phone_number='', role='buyer')
+    
+    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    cart_item_count = get_cart_item_count(request)
     
     # Get buyer's orders
     orders = Order.objects.filter(customer=request.user).order_by('-created_at')[:10]
@@ -228,7 +229,7 @@ def seller_dashboard(request):
     
     # Get pending orders (both regular and anonymous)
     pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
-    anonymous_orders = AnonymousOrder.objects.filter(is_processed=False).order_by('-created_at')
+    anonymous_orders = Order.objects.filter(status='pending', is_anonymous=True).order_by('-created_at')
     
     # Get seller's accepted orders
     my_orders = Order.objects.filter(seller=request.user).order_by('-created_at')[:10]
@@ -278,7 +279,7 @@ def superuser_dashboard(request):
     
     # Get recent orders
     recent_orders = Order.objects.order_by('-created_at')[:10]
-    recent_anonymous_orders = AnonymousOrder.objects.order_by('-created_at')[:5]
+    recent_anonymous_orders = Order.objects.filter(is_anonymous=True).order_by('-created_at')[:5]
     
     # Get today's reports
     today = timezone.now().date()
@@ -320,33 +321,8 @@ def accept_anonymous_order(request, order_id):
         messages.error(request, _('User profile not found.'))
         return redirect('home')
     
-    anonymous_order = get_object_or_404(AnonymousOrder, id=order_id, is_processed=False)
-    
-    # Create a regular Order from the anonymous order
-    order = Order.objects.create(
-        customer=None,  # No customer since it's anonymous
-        customer_name=anonymous_order.customer_name,
-        customer_email=anonymous_order.customer_email,
-        customer_phone=anonymous_order.customer_phone,
-        delivery_address=anonymous_order.delivery_address,
-        total_amount=anonymous_order.total_amount,
-        status='accepted',
-        seller=request.user
-    )
-    
-    # Create OrderItems from the stored order data
-    for item_data in anonymous_order.order_data:
-        product = Product.objects.get(id=item_data['product_id'])
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            quantity=item_data['quantity'],
-            price=item_data['unit_price']
-        )
-    
-    # Mark anonymous order as processed
-    anonymous_order.is_processed = True
-    anonymous_order.save()
+    order = get_object_or_404(Order, id=order_id, status='pending', is_anonymous=True)
+    order.accept_order(request.user)
     
     messages.success(request, _('Anonymous order accepted successfully!'))
     return redirect('seller_dashboard')
@@ -393,9 +369,6 @@ def complete_order(request, order_id):
 @login_required
 def daily_report_view(request):
     """Daily report form for sellers"""
-    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    cart_item_count = get_cart_item_count(request)
-    
     # Check if user is seller
     try:
         user_profile = request.user.userprofile
@@ -406,13 +379,25 @@ def daily_report_view(request):
         messages.error(request, _('User profile not found.'))
         return redirect('home')
     
-    today = timezone.now().date()
+    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    cart_item_count = get_cart_item_count(request)
+    
+    # Allow filling reports for any date (including past dates)
+    report_date = request.GET.get('date')
+    if report_date:
+        try:
+            report_date = datetime.strptime(report_date, '%Y-%m-%d').date()
+        except ValueError:
+            report_date = timezone.now().date()
+    else:
+        report_date = timezone.now().date()
+    
     report, created = DailyReport.objects.get_or_create(
         seller=request.user,
-        date=today,
+        date=report_date,
         defaults={
-            'books_sold_money': 0,
-            'books_given_free': 0,
+            'books_sold_details': [],
+            'books_given_free_details': [],
             'houses_visited': 0,
             'teachings_given': 0,
             'working_hours': 0,
@@ -420,8 +405,38 @@ def daily_report_view(request):
     )
     
     if request.method == 'POST':
-        report.books_sold_money = int(request.POST.get('books_sold_money', 0))
-        report.books_given_free = int(request.POST.get('books_given_free', 0))
+        # Process books sold
+        books_sold_details = []
+        book_sold_names = request.POST.getlist('book_sold_name[]')
+        custom_book_sold = request.POST.getlist('custom_book_sold[]')
+        book_sold_quantities = request.POST.getlist('book_sold_quantity[]')
+        
+        for i, (name, custom_name, quantity) in enumerate(zip(book_sold_names, custom_book_sold, book_sold_quantities)):
+            if quantity and int(quantity) > 0:
+                book_name = custom_name if name == 'custom' and custom_name else name
+                if book_name:
+                    books_sold_details.append({
+                        'book_name': book_name,
+                        'quantity': int(quantity)
+                    })
+        
+        # Process books given free
+        books_given_free_details = []
+        book_free_names = request.POST.getlist('book_free_name[]')
+        custom_book_free = request.POST.getlist('custom_book_free[]')
+        book_free_quantities = request.POST.getlist('book_free_quantity[]')
+        
+        for i, (name, custom_name, quantity) in enumerate(zip(book_free_names, custom_book_free, book_free_quantities)):
+            if quantity and int(quantity) > 0:
+                book_name = custom_name if name == 'custom' and custom_name else name
+                if book_name:
+                    books_given_free_details.append({
+                        'book_name': book_name,
+                        'quantity': int(quantity)
+                    })
+        
+        report.books_sold_details = books_sold_details
+        report.books_given_free_details = books_given_free_details
         report.houses_visited = int(request.POST.get('houses_visited', 0))
         report.teachings_given = int(request.POST.get('teachings_given', 0))
         report.working_hours = float(request.POST.get('working_hours', 0))
@@ -431,10 +446,25 @@ def daily_report_view(request):
         messages.success(request, _('Daily report saved successfully!'))
         return redirect('seller_dashboard')
     
+    # Get available dates for dropdown (last 30 days)
+    from datetime import timedelta
+    available_dates = []
+    for i in range(30):
+        date = timezone.now().date() - timedelta(days=i)
+        available_dates.append(date)
+    
+    # Get all products for book selection
+    products = Product.objects.all().order_by('name')
+    products_names = [product.name for product in products]
+    
     context = {
         'categories': categories,
         'cart_item_count': cart_item_count,
         'report': report,
+        'report_date': report_date,
+        'available_dates': available_dates,
+        'products': products,
+        'products_names': products_names,
         'current_tab': 'report',
         'theme': request.session.get('theme', 'light'),
     }
@@ -559,77 +589,6 @@ def view_reports(request):
         'theme': request.session.get('theme', 'light'),
     }
     return render(request, 'users/view_reports.html', context)
-@login_required
-def book_sales_report(request):
-    """Book sales report for sellers"""
-    from products.models import BookSaleReport, Product
-    
-    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-    cart_item_count = get_cart_item_count(request)
-    
-    # Check if user is seller
-    try:
-        user_profile = request.user.userprofile
-        if user_profile.role != 'seller':
-            messages.error(request, _('Only sellers can access book sales reports.'))
-            return redirect('home')
-    except UserProfile.DoesNotExist:
-        messages.error(request, _('User profile not found.'))
-        return redirect('home')
-    
-    if request.method == 'POST':
-        product_id = request.POST.get('product')
-        quantity_sold_money = int(request.POST.get('quantity_sold_money', 0))
-        quantity_given_free = int(request.POST.get('quantity_given_free', 0))
-        sale_price = float(request.POST.get('sale_price', 0))
-        notes = request.POST.get('notes', '')
-        
-        product = get_object_or_404(Product, id=product_id)
-        today = timezone.now().date()
-        
-        # Create or update book sale report
-        report, created = BookSaleReport.objects.get_or_create(
-            seller=request.user,
-            product=product,
-            date_reported=today,
-            defaults={
-                'quantity_sold_money': quantity_sold_money,
-                'quantity_given_free': quantity_given_free,
-                'sale_price': sale_price,
-                'notes': notes
-            }
-        )
-        
-        if not created:
-            # Update existing report
-            report.quantity_sold_money += quantity_sold_money
-            report.quantity_given_free += quantity_given_free
-            report.sale_price = sale_price
-            report.notes = notes
-            report.save()
-        
-        messages.success(request, _('Book sale report saved successfully!'))
-        return redirect('book_sales_report')
-    
-    # Get all products for the dropdown
-    products = Product.objects.all().order_by('name')
-    
-    # Get today's reports
-    today = timezone.now().date()
-    today_reports = BookSaleReport.objects.filter(
-        seller=request.user, 
-        date_reported=today
-    ).select_related('product')
-    
-    context = {
-        'categories': categories,
-        'cart_item_count': cart_item_count,
-        'products': products,
-        'today_reports': today_reports,
-        'current_tab': 'book_sales',
-        'theme': request.session.get('theme', 'light'),
-    }
-    return render(request, 'users/book_sales_report.html', context)
 
 def password_reset_request(request):
     """Password reset request view"""
@@ -904,3 +863,89 @@ def Shop(request):
         'cart_item_count': cart_item_count,
         'theme': request.session.get('theme', 'light'),
     })
+
+
+@login_required
+def generate_monthly_reports(request):
+    """Generate monthly reports for all sellers"""
+    # Check if user is superuser
+    try:
+        user_profile = request.user.userprofile
+        if user_profile.role != 'superuser' and not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can generate reports.'))
+            return redirect('home')
+    except UserProfile.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, _('Access denied. Only administrators can generate reports.'))
+            return redirect('home')
+    
+    # Get month and year from request
+    month = int(request.GET.get('month', timezone.now().month))
+    year = int(request.GET.get('year', timezone.now().year))
+    
+    # Get all sellers
+    sellers = User.objects.filter(userprofile__role='seller')
+    
+    generated_reports = []
+    for seller in sellers:
+        monthly_report = MonthlyReport.generate_monthly_report(seller, month, year)
+        if monthly_report:
+            generated_reports.append(monthly_report)
+    
+    messages.success(request, f'Generated {len(generated_reports)} monthly reports for {month}/{year}')
+    return redirect('monthly_reports')
+
+def is_superuser(user):
+    """
+    Allow access only to users whose profile role is 'superuser'.
+    """
+    try:
+        return user.userprofile.role == 'superuser'
+    except UserProfile.DoesNotExist:
+        return False
+
+@login_required
+@user_passes_test(is_superuser)
+def monthly_reports_view(request):
+    """
+    Display the Monthly Reports page.
+    - Shows a form to pick month/year.
+    - If month/year are provided via GET, loads existing MonthlyReport records.
+    """
+    # Current date info for form defaults
+    now = timezone.now()
+    current_month = now.month
+    current_year = now.year
+
+    # Build a list of years (e.g. last 5 years through this year)
+    available_years = list(range(current_year - 5, current_year + 1))
+
+    # Pull GET params if set
+    month_param = request.GET.get('month')
+    year_param = request.GET.get('year')
+
+    monthly_reports = None
+    selected_month = None
+
+    if month_param and year_param:
+        # Parse into integers
+        month = int(month_param)
+        year = int(year_param)
+        # Build a date object for display heading
+        selected_month = date(year, month, 1)
+        # Fetch any reports already generated for that month/year
+        monthly_reports = MonthlyReport.objects.filter(
+            month=month,
+            year=year
+        ).select_related('seller')
+
+    context = {
+        'theme': request.session.get('theme', 'light'),
+        'current_month': current_month,
+        'current_year': current_year,
+        'available_years': available_years,
+        'monthly_reports': monthly_reports,
+        'selected_month': selected_month,
+    }
+
+    return render(request, 'users/monthly_reports.html', context)
