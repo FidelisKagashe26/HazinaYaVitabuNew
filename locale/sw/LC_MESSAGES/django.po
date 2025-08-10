@@ -1368,3 +1368,63 @@ msgstr "Hauruhusiwi. Wasimamizi tu ndio wanaweza kuona ripoti."
 
 #~ msgid "Only administrators can view monthly reports."
 #~ msgstr "Wasimamizi tu ndio wanaweza kuona ripoti za kila mwezi."
+
+#: templates/landing.html:3
+msgid "Hazina ya Vitabu - Evangelistic Books"
+msgstr "Hazina ya Vitabu - Vitabu vya Kiinjilisti"
+
+#: templates/landing.html:10
+msgid "Welcome"
+msgstr "Karibu"
+
+#: templates/landing.html:14
+msgid "Welcome — order a variety of books to help you grow spiritually, financially, in family life, socially and in health."
+msgstr "Karibu — agiza vitabu mbalimbali vitakavyokusaidia kukua kiroho, kifedha, katika maisha ya kifamilia, kijamii na kiafya."
+
+#: templates/landing.html:20
+msgid "Visit Shop"
+msgstr "Tembelea Duka"
+
+#: templates/landing.html:27
+msgid "Why read books?"
+msgstr "Kwanini tusome vitabu?"
+
+#: templates/landing.html:33
+msgid "Spiritual Life Guidance"
+msgstr "Miongozo ya Maisha ya Kiroho"
+
+#: templates/landing.html:34
+msgid "Gain knowledge to live a purposeful life aligned with Biblical teachings."
+msgstr "Pata maarifa ya kuishi maisha yenye kusudi ambayo yanaendana na mafundisho ya Biblia."
+
+#: templates/landing.html:39
+msgid "Health & Wellness"
+msgstr "Afya na Ustawi"
+
+#: templates/landing.html:40
+msgid "Read books that help you build healthy habits, nutrition knowledge, and a better lifestyle."
+msgstr "Soma vitabu vitakavyokusaidia kujenga tabia za kiafya, maarifa ya lishe, na mtindo bora wa maisha."
+
+#: templates/landing.html:45
+msgid "Strengthening Family Relationships"
+msgstr "Kuimarisha Mahusiano ya Familia"
+
+#: templates/landing.html:46
+msgid "Books that promote family values and unity grounded in Christian faith."
+msgstr "Vitabu vinavyokuza maadili ya kifamilia na umoja kulingana na imani ya Kikristo."
+
+#: templates/landing.html:51
+msgid "Strengthening Social Relationships"
+msgstr "Kuimarisha Mahusiano ya Kijamii"
+
+#: templates/landing.html:52
+msgid "Learn how to live peacefully in community and be a positive example of Christ."
+msgstr "Jifunze jinsi ya kuishi kwa amani ndani ya jamii na kuwa mfano chanya wa Kristo."
+
+#: templates/landing.html:57
+msgid "Economic Empowerment"
+msgstr "Kujengeka Kiuchumi"
+
+#: templates/landing.html:58
+msgid "Learn Biblical financial principles, small business ideas, and saving strategies for the future."
+msgstr "Jifunze kanuni za kifedha za Kibiblia, mawazo ya biashara ndogo ndogo, na mbinu za kuweka akiba kwa ajili ya siku zijazo."
