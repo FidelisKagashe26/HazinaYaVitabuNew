@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,12 +58,13 @@ ROOT_URLCONF = 'shopping_center.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'templates' ],         # <-- Path object
+        'DIRS': [ BASE_DIR / 'templates' ],         
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',  
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -119,8 +120,8 @@ MESSAGE_TAGS = {
 LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
-    ('en', 'English'),
-    ('sw', 'Swahili'),
+    ('en', _('English')),
+    ('sw', _('Swahili')),
 ]
 
 LOCALE_PATHS = [
@@ -132,7 +133,6 @@ TIME_ZONE = 'Africa/Dar_es_Salaam'  # Set the timezone to Tanzania's timezone
 USE_I18N = True
 
 USE_TZ = True
-
 
 
 # Static files (CSS, JavaScript, Images)

@@ -9006,3 +9006,416 @@ Traceback (most recent call last):
            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
 django.db.utils.IntegrityError: UNIQUE constraint failed: users_userprofile.user_id
 ERROR 2025-08-07 14:00:44,526 basehttp "POST /users/register/ HTTP/1.1" 500 168139
+ERROR 2025-08-07 14:34:55,178 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-07 14:34:55,192 basehttp "GET / HTTP/1.1" 500 63637
+ERROR 2025-08-07 14:38:21,965 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-07 14:38:21,971 basehttp "GET / HTTP/1.1" 500 63774
+ERROR 2025-08-09 23:19:26,799 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:19:26,807 basehttp "GET / HTTP/1.1" 500 63729
+ERROR 2025-08-09 23:19:27,885 log Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:19:27,894 basehttp "GET /favicon.ico HTTP/1.1" 500 63524
+ERROR 2025-08-09 23:19:30,918 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:19:30,924 basehttp "GET / HTTP/1.1" 500 63866
+ERROR 2025-08-09 23:19:31,090 log Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:19:31,098 basehttp "GET /favicon.ico HTTP/1.1" 500 63524
+ERROR 2025-08-09 23:20:36,285 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:20:36,294 basehttp "GET / HTTP/1.1" 500 63866
+ERROR 2025-08-09 23:20:36,472 log Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:20:36,477 basehttp "GET /favicon.ico HTTP/1.1" 500 63524
+ERROR 2025-08-09 23:20:37,416 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:20:37,423 basehttp "GET / HTTP/1.1" 500 63866
+ERROR 2025-08-09 23:20:37,581 log Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-09 23:20:37,585 basehttp "GET /favicon.ico HTTP/1.1" 500 63524
+ERROR 2025-08-10 11:34:09,350 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-10 11:34:09,361 basehttp "GET / HTTP/1.1" 500 63729
+ERROR 2025-08-10 11:34:09,955 log Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+TypeError: 'dict' object is not callable
+ERROR 2025-08-10 11:34:09,990 basehttp "GET /favicon.ico HTTP/1.1" 500 63524
+ERROR 2025-08-10 11:52:55,277 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\projects\HazinaYaVitabu\project\products\views.py", line 50, in Home
+    return render(request, 'users/landing.html', {
+        'current_tab': 'home',
+    ...<3 lines>...
+        'theme': request.session.get('theme', 'light'),
+    })
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'set_language' with no arguments not found. 1 pattern(s) tried: ['users/set\\-language/(?P<language>[^/]+)/\\Z']
+ERROR 2025-08-10 11:52:55,298 basehttp "GET / HTTP/1.1" 500 152533
+ERROR 2025-08-10 12:47:25,982 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 180, in translate_token
+    op = OPERATORS[token]
+         ~~~~~~~~~^^^^^^^
+KeyError: 'cart_item_count|int'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\projects\HazinaYaVitabu\project\products\views.py", line 50, in Home
+    return render(request, 'users/landing.html', {
+        'current_tab': 'home',
+    ...<3 lines>...
+        'theme': request.session.get('theme', 'light'),
+    })
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 134, in render
+    compiled_parent = self.get_parent(context)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 131, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 109, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 961, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 894, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 171, in __init__
+    mapped_tokens.append(self.translate_token(token))
+                         ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 182, in translate_token
+    return self.create_var(token)
+           ~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 897, in create_var
+    return TemplateLiteral(self.template_parser.compile_filter(value), value)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 605, in compile_filter
+    return FilterExpression(token, self)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 701, in __init__
+    filter_func = parser.find_filter(filter_name)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 611, in find_filter
+    raise TemplateSyntaxError("Invalid filter: '%s'" % filter_name)
+django.template.exceptions.TemplateSyntaxError: Invalid filter: 'int'
+ERROR 2025-08-10 12:47:26,028 basehttp "GET / HTTP/1.1" 500 278525
+ERROR 2025-08-10 12:47:29,958 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 180, in translate_token
+    op = OPERATORS[token]
+         ~~~~~~~~~^^^^^^^
+KeyError: 'cart_item_count|int'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\projects\HazinaYaVitabu\project\products\views.py", line 50, in Home
+    return render(request, 'users/landing.html', {
+        'current_tab': 'home',
+    ...<3 lines>...
+        'theme': request.session.get('theme', 'light'),
+    })
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 134, in render
+    compiled_parent = self.get_parent(context)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 131, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 109, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 961, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 894, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 171, in __init__
+    mapped_tokens.append(self.translate_token(token))
+                         ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 182, in translate_token
+    return self.create_var(token)
+           ~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 897, in create_var
+    return TemplateLiteral(self.template_parser.compile_filter(value), value)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 605, in compile_filter
+    return FilterExpression(token, self)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 701, in __init__
+    filter_func = parser.find_filter(filter_name)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 611, in find_filter
+    raise TemplateSyntaxError("Invalid filter: '%s'" % filter_name)
+django.template.exceptions.TemplateSyntaxError: Invalid filter: 'int'
+ERROR 2025-08-10 12:47:29,997 basehttp "GET / HTTP/1.1" 500 278513
+ERROR 2025-08-10 12:49:36,431 log Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 180, in translate_token
+    op = OPERATORS[token]
+         ~~~~~~~~~^^^^^^^
+KeyError: 'cart_item_count|int'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\projects\HazinaYaVitabu\project\products\views.py", line 50, in Home
+    return render(request, 'users/landing.html', {
+        'current_tab': 'home',
+    ...<3 lines>...
+        'theme': request.session.get('theme', 'light'),
+    })
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 134, in render
+    compiled_parent = self.get_parent(context)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 131, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loader_tags.py", line 109, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 961, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 894, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 171, in __init__
+    mapped_tokens.append(self.translate_token(token))
+                         ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\smartif.py", line 182, in translate_token
+    return self.create_var(token)
+           ~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\defaulttags.py", line 897, in create_var
+    return TemplateLiteral(self.template_parser.compile_filter(value), value)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 605, in compile_filter
+    return FilterExpression(token, self)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 701, in __init__
+    filter_func = parser.find_filter(filter_name)
+  File "C:\projects\HazinaYaVitabu\project\venv\Lib\site-packages\django\template\base.py", line 611, in find_filter
+    raise TemplateSyntaxError("Invalid filter: '%s'" % filter_name)
+django.template.exceptions.TemplateSyntaxError: Invalid filter: 'int'
+ERROR 2025-08-10 12:49:36,470 basehttp "GET / HTTP/1.1" 500 276313
