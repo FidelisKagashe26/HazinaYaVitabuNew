@@ -1,45 +1,57 @@
 {% extends 'users/home.html' %}
 {% load static %}
-{% block header %}
 {% load custom_filters %}
-Fmk Shop - Shop
+{% load i18n %}
+
+{% block header %}
+{% trans "Fmk Shop - Shop" %}
 {% endblock %}
 
 {% block main_block %}
-<div class="py-8 px-3 md:px-12 bg-gradient-to-b from-blue-100 via-blue-100 to-blue-200">
+<div class="py-8 px-3 md:px-12 {% if theme == 'dark' %}bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800{% else %}bg-gradient-to-b from-blue-100 via-blue-100 to-blue-200{% endif %}">
     <!-- Header Section -->
-    <header class="mb-8 pb-6 border-b-4 border-blue-300">
-        <h1 class="text-4xl font-extrabold text-center text-blue-900">Agiza <span class="text-blue-700">Sasa</span></h1>
-        <p class="text-center text-lg mt-3 text-gray-800">Agiza kitabu chochote ukipendacho kutoka kwenye orodha zifuatazo.</p>
+    <header class="mb-8 pb-6 border-b-4 {% if theme == 'dark' %}border-gray-700{% else %}border-blue-300{% endif %}">
+        <h1 class="text-4xl font-extrabold text-center {% if theme == 'dark' %}text-white{% else %}text-blue-900{% endif %}">
+            {% trans "Order" %} <span class="{% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %}">{% trans "Now" %}</span>
+        </h1>
+        <p class="text-center text-lg mt-3 {% if theme == 'dark' %}text-gray-300{% else %}text-gray-800{% endif %}">
+            {% trans "Order any book you like from the lists below." %}
+        </p>
     </header>
 
     <!-- Categories Section -->
-    <section class="py-8 bg-white ring ring-blue-200 shadow-xl rounded-lg">
-        <h2 class="text-3xl font-semibold mb-4 text-center text-blue-900">Orodha za vitabu.</h2>
+    <section class="py-8 {% if theme == 'dark' %}bg-gray-800 ring ring-gray-700{% else %}bg-white ring ring-blue-200{% endif %} shadow-xl rounded-lg">
+        <h2 class="text-3xl font-semibold mb-4 text-center {% if theme == 'dark' %}text-white{% else %}text-blue-900{% endif %}">{% trans "Book lists." %}</h2>
         <div class="m-4 text-center">
-            <span class="inline-block bg-blue-50 text-gray-700 py-2 px-3 font-semibold rounded-lg shadow-xl transition duration-300 text-center">
-                Chagua kutoka kwa chaguzi zilizo hapa chini kwa kubonyeza sehemu husika.
+            <span class="inline-block {% if theme == 'dark' %}bg-gray-700 text-gray-200{% else %}bg-blue-50 text-gray-700{% endif %} py-2 px-3 font-semibold rounded-lg shadow-xl transition duration-300 text-center">
+                {% trans "Choose from the options below by clicking the relevant section." %}
             </span>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-3">
             {% for category in categories %}
-                <div class="block bg-blue-50 p-4 border-2 rounded-lg shadow-xl hover:shadow-md hover:bg-blue-50 transition-all duration-300 transform hover:scale-105">
-                    <h3 class="text-center font-semibold mt-2 text-gray-700 text-xl">{{ category.name }}</h3>
+                <div class="block {% if theme == 'dark' %}bg-gray-700{% else %}bg-blue-50{% endif %} p-4 border-2 rounded-lg shadow-xl hover:shadow-md transition-all duration-300 transform hover:scale-105">
+                    <h3 class="text-center font-semibold mt-2 {% if theme == 'dark' %}text-gray-100{% else %}text-gray-700{% endif %} text-xl">{{ category.name }}</h3>
+
                     {% if category.subcategories.exists %}
                         <div class="mt-4">
                             {% for subcategory in category.subcategories.all %}
-                                <a href="{% url 'products_by_subcategory' subcategory.name %}" class="shadow block bg-white p-3 mb-4 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition duration-300 transform hover:scale-105">
-                                    <h4 class="text-center text-gray-600 font-medium">{{ subcategory.name }}</h4>
+                                <a href="{% url 'products_by_subcategory' subcategory.name %}" class="shadow block {% if theme == 'dark' %}bg-gray-800 text-gray-200{% else %}bg-white{% endif %} p-3 mb-4 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition duration-300 transform hover:scale-105">
+                                    <h4 class="text-center {% if theme == 'dark' %}text-gray-200{% else %}text-gray-600{% endif %} font-medium">{{ subcategory.name }}</h4>
                                     <div class="grid grid-cols-2 gap-4 mt-3">
                                         {% for product in subcategory.products.all|slice:":2" %}
-                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-50 object-cover rounded-lg shadow-sm">
+                                            {% if product.image %}
+                                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-50 object-cover rounded-lg shadow-sm">
+                                            {% else %}
+                                                <div class="w-full h-50 bg-gray-200 rounded-lg"></div>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </a>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-center text-gray-500 mt-4">Hakuna chaguzi zozote.</p>
+                        <p class="text-center {% if theme == 'dark' %}text-gray-400{% else %}text-gray-500{% endif %} mt-4">{% trans "No options available." %}</p>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -47,33 +59,38 @@ Fmk Shop - Shop
     </section>
 
     <!-- Featured Products Section -->
-    <section class="py-8 bg-white mt-4 ring ring-blue-200 shadow-xl rounded-lg">
-        <h2 class="text-3xl font-semibold mb-3 text-center text-blue-900">Vitabu vyote</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-3 bg-blue-50 m-3 rounded-lg">
+    <section class="py-8 {% if theme == 'dark' %}bg-gray-800 ring ring-gray-700{% else %}bg-white ring ring-blue-200{% endif %} mt-4 shadow-xl rounded-lg">
+        <h2 class="text-3xl font-semibold mb-3 text-center {% if theme == 'dark' %}text-white{% else %}text-blue-900{% endif %}">{% trans "All Books" %}</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-3 {% if theme == 'dark' %}bg-gray-900{% else %}bg-blue-50{% endif %} m-3 rounded-lg">
             {% for product in products %}
-            <div class="bg-white rounded-lg shadow-xl overflow-hidden border-2 hover:shadow-lg transition-all transform hover:scale-105 duration-300 flex flex-col">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-72 object-cover">
+            <div class="{% if theme == 'dark' %}bg-gray-800 text-gray-100{% else %}bg-white text-gray-900{% endif %} rounded-lg shadow-xl overflow-hidden border-2 hover:shadow-lg transition-all transform hover:scale-105 duration-300 flex flex-col">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-72 object-cover">
+                {% else %}
+                    <div class="w-full h-72 bg-gray-700"></div>
+                {% endif %}
                 <div class="p-4 flex-1 flex flex-col justify-between">
                     <!-- Product Name -->
-                    <h3 class="text-lg font-semibold text-blue-700 border-b-2 border-blue-300 pb-2">{{ product.name }}</h3>
+                    <h3 class="text-lg font-semibold {% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %} border-b-2 border-blue-300 pb-2">{{ product.name }}</h3>
 
                     <!-- Product Price -->
-                    <p class="text-gray-600 pt-2"><span class="font-bold">Kiasi:</span> {{ product.price|format_currency }}</p>
+                    <p class="text-gray-600 pt-2"><span class="font-bold">{% trans "Price:" %}</span> {{ product.price|format_currency }}</p>
 
                     <!-- Divider -->
                     <div class="border-b-2 border-gray-300 my-4"></div>
 
                     <!-- See More Button -->
                     <div class="mt-4">
-                        <a href="{% url 'product_detail' product.pk %}" class="inline-block bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-500 transition duration-300 text-center">
-                            Tazama zaidi
+                        <a href="{% url 'product_detail' product.pk %}" class="inline-block {% if theme == 'dark' %}bg-blue-600 text-white{% else %}bg-blue-600 text-white{% endif %} py-2 px-4 rounded-full hover:bg-blue-500 transition duration-300 text-center">
+                            {% trans "See more" %}
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-                <p class="text-gray-500 text-center col-span-full">Hakuna vitabu.
-                    <a href="{% url 'shop' %}" class="text-blue-600 hover:underline">Tembelea Dukani</a>
+                <p class="text-gray-500 text-center col-span-full">{% trans "No books." %}
+                    <a href="{% url 'shop' %}" class="text-blue-600 hover:underline">{% trans "Visit Shop" %}</a>
                 </p>
             {% endfor %}
         </div>

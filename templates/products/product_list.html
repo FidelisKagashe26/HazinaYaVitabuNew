@@ -5,14 +5,14 @@
 {% load i18n %}
 
 {% block header %}
-Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_name }}{% endif %}
+{% trans "Hazina ya Vitabu - " %}{{ category_name }}{% if subcategory_name %} {{ subcategory_name }}{% endif %}
 {% endblock %}
 
 {% block main_block %}
 
 <!-- Category & Subcategory Heading -->
-<div class="text-center mt-2 bg-blue-100 py-3 border-b-2 border-blue-700">
-    <h1 class="text-2xl font-bold text-blue-800">
+<div class="text-center mt-2 {% if theme == 'dark' %}bg-gray-800{% else %}bg-blue-100{% endif %} py-3 border-b-2 {% if theme == 'dark' %}border-gray-700{% else %}border-blue-700{% endif %}">
+    <h1 class="text-2xl font-bold {% if theme == 'dark' %}text-gray-100{% else %}text-blue-800{% endif %}">
         {{ category_name }}
         {% if subcategory_name %}
             - {{ subcategory_name }}
@@ -21,38 +21,35 @@ Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_n
 </div>
 
 <!-- Subcategory Dropdown -->
-{% comment %} py-4 px-6 {% endcomment %}
-<div class="bg-white"> 
+<div class="{% if theme == 'dark' %}bg-gray-900 text-gray-100{% else %}bg-white text-gray-900{% endif %} p-4">
     {% if subcategories %}
-        <h2 class="text-xl font-semibold text-blue-700">Machaguzi</h2>
+        <h2 class="text-xl font-semibold {% if theme == 'dark' %}text-gray-100{% else %}text-blue-700{% endif %}">{% trans "Filters" %}</h2>
         <ul class="mt-2 space-y-2">
             {% for subcategory in subcategories %}
                 <li>
-                    <a href="{% url 'products_by_subcategory' subcategory.name %}" class="text-blue-700 hover:text-blue-900 underline">
+                    <a href="{% url 'products_by_subcategory' subcategory.name %}" class="{% if theme == 'dark' %}text-blue-300 hover:text-blue-200{% else %}text-blue-700 hover:text-blue-900{% endif %} underline">
                         {{ subcategory.name }}
                     </a>
                 </li>
             {% endfor %}
         </ul>
-    {% else %}
-        {% comment %} <p class="text-gray-500">No subcategories available for this category.</p> {% endcomment %}
     {% endif %}
 </div>
 
-
-<div class="bg-white w-full md:w-2/3 p-4 border-blue-700 mx-auto">
+<!-- Search / Filter Form -->
+<div class="bg-white w-full md:w-2/3 p-4 {% if theme == 'dark' %}bg-gray-800 text-gray-100{% else %}bg-white text-gray-900{% endif %} border-blue-700 mx-auto mt-4">
     <form method="GET" action="{% url 'products_by_subcategory' subcategory_name %}" class="flex flex-col md:flex-row items-center space-y-4 md:space-x-4 md:space-y-0">
 
         <!-- Combined Search Bar with Product Name and Price Range -->
         <div class="relative flex-1 w-full">
-            <input type="text" name="product_name" id="product_name" value="{{ request.GET.product_name }}" 
-                class="w-2/3 px-2 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Tafuta kitabu" />
+            <input type="text" name="product_name" id="product_name" value="{{ request.GET.product_name }}"
+                class="w-2/3 px-2 py-2 border {% if theme == 'dark' %}border-gray-700 bg-gray-900 text-gray-100{% else %}border-gray-300 bg-white text-gray-900{% endif %} rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="{% trans "Search book" %}" />
 
             <!-- Price Range Dropdown inside the Input Field on Larger Screens -->
-            <select name="price_range" id="price_range" 
-                class="w-1/3 absolute right-0 top-0 bottom-0 px-2 py-2 border border-gray-300 text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r-md">
-                <option value="">Bei</option>
+            <select name="price_range" id="price_range"
+                class="w-1/3 absolute right-0 top-0 bottom-0 px-2 py-2 border {% if theme == 'dark' %}border-gray-700 bg-gray-900 text-gray-100{% else %}border-gray-300 bg-white text-gray-600{% endif %} focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r-md">
+                <option value="">{% trans "Price" %}</option>
                 <option value="1" {% if request.GET.price_range == "1" %}selected{% endif %}>Tsh 0 - 1,000</option>
                 <option value="2" {% if request.GET.price_range == "2" %}selected{% endif %}>Tsh 1,001 - 5,000</option>
                 <option value="3" {% if request.GET.price_range == "3" %}selected{% endif %}>Tsh 5,001 - 10,000</option>
@@ -68,27 +65,30 @@ Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_n
         </div>
 
         <!-- Search Button with Icon -->
-        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            <i class="bi bi-search"></i> <!-- Add Bootstrap Icons Search Icon -->
+        <button type="submit" class="px-6 py-2 {% if theme == 'dark' %}bg-blue-600 text-white hover:bg-blue-500{% else %}bg-blue-600 text-white hover:bg-blue-700{% endif %} rounded-lg transition duration-200">
+            <i class="bi bi-search"></i>
         </button>
     </form>
 </div>
 
-
 <!-- Product Listing -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 bg-gray-100">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 {% if theme == 'dark' %}bg-gray-900{% else %}bg-gray-100{% endif %}">
     {% for product in products %}
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+    <div class="{% if theme == 'dark' %}bg-gray-800 text-gray-100 border-gray-700{% else %}bg-white text-gray-900{% endif %} rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
         <!-- Image Section -->
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="max-w-full object-contain flex-grow">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="max-w-full object-contain flex-grow">
+        {% else %}
+            <div class="w-full h-48 {% if theme == 'dark' %}bg-gray-700{% else %}bg-gray-200{% endif %}"></div>
+        {% endif %}
         
         <!-- Content Section at the Bottom -->
         <div class="p-4 mt-auto">
-            <h2 class="text-lg font-semibold text-blue-700">{{ product.name }}</h2>
-            <p class="text-gray-600"><span class="font-bold">Kiasi:</span> {{ product.price|format_currency }}</p>
+            <h2 class="text-lg font-semibold {% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %}">{{ product.name }}</h2>
+            <p class="text-gray-600"><span class="font-bold">{% trans "Price:" %}</span> {{ product.price|format_currency }}</p>
             <div class="mt-4 flex justify-between items-center">
-                <a href="{% url 'product_detail' product.pk %}" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-200">
-                    Tazama zaidi
+                <a href="{% url 'product_detail' product.pk %}" class="inline-block px-6 py-2 {% if theme == 'dark' %}bg-blue-600 text-white hover:bg-blue-500{% else %}bg-blue-600 text-white hover:bg-blue-500{% endif %} rounded-lg transition duration-200">
+                    {% trans "See more" %}
                 </a>
                 {% if product.stock > 0 %}
                 <button onclick="quickAddToCart({{ product.id }}, this)" class="bg-green-600 text-white p-2 rounded-full hover:bg-green-500 transition duration-200" title="{% trans 'Add to Cart' %}">
@@ -103,8 +103,8 @@ Hazina ya Vitabu - {{ category_name }}{% if subcategory_name %} {{ subcategory_n
         </div>
     </div>
     {% empty %}
-    <p class="text-gray-500 text-center col-span-full">Hakuna vitabu. 
-        <a href="{% url 'home' %}" class="text-blue-700 hover:underline">Jaribu kutafuta sehemu nyingine.</a>
+    <p class="text-gray-500 text-center col-span-full">{% trans "No books." %} 
+        <a href="{% url 'home' %}" class="{% if theme == 'dark' %}text-blue-300{% else %}text-blue-700{% endif %} hover:underline">{% trans "Try searching another section." %}</a>
     </p>
     {% endfor %}
 </div>
@@ -142,11 +142,14 @@ function quickAddToCart(productId, buttonElement) {
             showMessage(data.message, 'success');
             // Update cart count
             if (data.cart_item_count !== undefined) {
-                document.getElementById('cart-item-count').textContent = data.cart_item_count;
+                const el = document.getElementById('cart-item-count');
+                if (el) {
+                    el.textContent = data.cart_item_count;
+                }
                 animateCartItemCount();
             }
         } else {
-            showMessage(data.error, 'error');
+            showMessage(data.error || '{% trans "An error occurred. Please try again." %}', 'error');
         }
     })
     .catch(error => {
@@ -167,7 +170,7 @@ function showMessage(message, type) {
     messageDiv.innerHTML = `
         <div class="flex items-center justify-between">
             <span>${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+            <button onclick="this.closest('div').remove()" class="ml-4 text-white hover:text-gray-200">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
@@ -186,6 +189,7 @@ function showMessage(message, type) {
 function animateCartItemCount() {
     const cartItemCount = document.getElementById('cart-item-count');
     const cartLink = document.querySelector('a[aria-label="View cart"]');
+    if (!cartLink) return;
     
     // Add the shine animation class
     cartLink.classList.add('shine-animation');
